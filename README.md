@@ -10,6 +10,6 @@
 > email: knleungaa | github: Yummybatsoup | dev branch: batsoup_dev <br/>
 > Task 2 & Task 6
 
-## 3.
-> email:| github: |dev branch:
+## 3. Cheng Wai Kit
+> email: wkchengae| github: pochingto|dev branch: wk_features task 3 & 5
 >
