@@ -6,10 +6,10 @@
 > email: thliuab | github: jeffreyhkust |dev branch: jeffreylab5
 >
 
-## 2.
+## 2. 
 > email:| github: |dev branch:
 >
 
 ## 3. Cheng Wai Kit
-> email: wkchengae| github: pochingto|dev branch: wk_features task 3 & 5
->
+> email: wkchengae| github: pochingto|dev branch: wk_features
+> Task 3 & 5
