@@ -1,4 +1,4 @@
-# LEGEND27
+# LEGEND27 T-29
 > https://github.com/Yummybatsoup/Legend27.git
 
 
@@ -11,5 +11,5 @@
 > Task 2 & Task 6
 
 ## 3. Cheng Wai Kit
-> email: wkchengae| github: pochingto|dev branch: wk_features
+> email: wkchengae| github: pochingto|dev branch: wk_features <br/>
 > Task 3 & 5
