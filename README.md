@@ -3,12 +3,12 @@
 
 
 ## 1. Liu Tsz HEi
-> email: thliuab | github: jeffreyhkust |dev branch: jeffreylab5
->
+> email: thliuab | github: jeffreyhkust |dev branch: jeffreylab5 <br/>
+> Task 1 & T 4
 
-## 2. 
-> email:| github: |dev branch:
->
+## 2. Leung Kwong Nam
+> email: knleungaa | github: Yummybatsoup | dev branch: batsoup_dev <br/>
+> Task 2 & Task 6
 
 ## 3. Cheng Wai Kit
 > email: wkchengae| github: pochingto|dev branch: wk_features
