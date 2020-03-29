@@ -1,9 +1,8 @@
 # LEGEND27
-## Project Problem Statement and Activities
 
 
 
-> **1. Liu Tsz HEi** 
+## **1. Liu Tsz HEi** 
 > email: thliuab | github: jeffreyhkust |dev branch: jeffreylab5
 >
 
