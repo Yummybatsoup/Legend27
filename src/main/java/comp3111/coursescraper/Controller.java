@@ -1,8 +1,10 @@
 package comp3111.coursescraper;
 
+
 import java.awt.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -67,6 +69,80 @@ public class Controller {
 
     @FXML
     private TextArea textAreaConsole;
+    
+    @FXML
+    private Button buttonselect;
+    
+    @FXML
+    private CheckBox checkboxAM;
+
+    @FXML
+    private CheckBox checkboxPM;
+
+    @FXML
+    private CheckBox checkboxMon;
+
+    @FXML
+    private CheckBox checkboxTue;
+
+    @FXML
+    private CheckBox checkboxWed;
+
+    @FXML
+    private CheckBox checkboxThu;
+
+    @FXML
+    private CheckBox checkboxFri;
+
+    @FXML
+    private CheckBox checkboxSat;
+    
+    @FXML
+    private CheckBox checkboxCom;
+
+    @FXML
+    private CheckBox checkboxExc;
+
+    @FXML
+    private CheckBox checkboxLabtut;
+    
+    @FXML
+    void buttonselectall() {
+    	if (buttonselect.getText().equals("Select All"))
+    	{
+    		buttonselect.setText("De-select All");
+    		checkboxAM.setSelected(true);
+    		checkboxPM.setSelected(true);
+    		checkboxMon.setSelected(true);
+    		checkboxTue.setSelected(true);
+    		checkboxWed.setSelected(true);
+    		checkboxThu.setSelected(true);
+    		checkboxFri.setSelected(true);
+    		checkboxSat.setSelected(true);
+    		checkboxCom.setSelected(true);
+    		checkboxExc.setSelected(true);
+    		checkboxLabtut.setSelected(true);
+    	}
+    	else
+    	{
+    		buttonselect.setText("Select All");
+    		checkboxAM.setSelected(false);
+    		checkboxPM.setSelected(false);
+    		checkboxMon.setSelected(false);
+    		checkboxTue.setSelected(false);
+    		checkboxWed.setSelected(false);
+    		checkboxThu.setSelected(false);
+    		checkboxFri.setSelected(false);
+    		checkboxSat.setSelected(false);
+    		checkboxCom.setSelected(false);
+    		checkboxExc.setSelected(false);
+    		checkboxLabtut.setSelected(false);
+    	}
+    }
+    void clickAM() {
+    	
+    }
+
     
     private Scraper scraper = new Scraper();
     
