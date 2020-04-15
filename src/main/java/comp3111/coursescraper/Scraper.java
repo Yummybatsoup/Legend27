@@ -3,6 +3,7 @@ package comp3111.coursescraper;
 import java.net.URLEncoder;
 import java.util.List;
 
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
@@ -11,6 +12,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.DomText;
 import java.util.Vector;
+
+import org.apache.http.client.HttpResponseException;
 
 
 /**
@@ -77,6 +80,7 @@ import java.util.Vector;
  */
 public class Scraper {
 	private WebClient client;
+	private String section = "";
 
 	/**
 	 * Default Constructor 
@@ -88,7 +92,18 @@ public class Scraper {
 	}
 
 	private void addSlot(HtmlElement e, Course c, boolean secondRow) {
+		/*
+		for(int i=0; i<5 ;i++) {
+			if (e.getChildNodes().get(i) != null)
+				System.out.println(i+ e.getChildNodes().get(i).asText());
+		}
+		System.out.println();
+*/
+		
 		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split(" ");
+		if (!secondRow) {
+			section = e.getChildNodes().get(1).asText().split(" ")[0]; 
+		}
 		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
 		if (times[0].equals("TBA"))
 			return;
@@ -97,6 +112,7 @@ public class Scraper {
 			if (Slot.DAYS_MAP.get(code) == null)
 				break;
 			Slot s = new Slot();
+			s.setSection(section);
 			s.setDay(Slot.DAYS_MAP.get(code));
 			s.setStart(times[1]);
 			s.setEnd(times[3]);
@@ -112,7 +128,7 @@ public class Scraper {
 			
 			HtmlPage page = client.getPage(baseurl + "/" + term + "/subject/" + sub);
 
-			
+			//Create a list according the number of course
 			List<?> items = (List<?>) page.getByXPath("//div[@class='course']");
 			
 			Vector<Course> result = new Vector<Course>();
@@ -121,14 +137,18 @@ public class Scraper {
 				Course c = new Course();
 				HtmlElement htmlItem = (HtmlElement) items.get(i);
 				
+				//get title
 				HtmlElement title = (HtmlElement) htmlItem.getFirstByXPath(".//h2");
 				c.setTitle(title.asText());
 				
+				
 				List<?> popupdetailslist = (List<?>) htmlItem.getByXPath(".//div[@class='popupdetail']/table/tbody/tr");
 				HtmlElement exclusion = null;
+				
+				//get exclusion courses
 				for ( HtmlElement e : (List<HtmlElement>)popupdetailslist) {
-					HtmlElement t = (HtmlElement) e.getFirstByXPath(".//th");
-					HtmlElement d = (HtmlElement) e.getFirstByXPath(".//td");
+					HtmlElement t = (HtmlElement) e.getFirstByXPath(".//th"); //EXCLUSION
+					HtmlElement d = (HtmlElement) e.getFirstByXPath(".//td"); //EXCLUSION COURSES
 					if (t.asText().equals("EXCLUSION")) {
 						exclusion = d;
 					}
@@ -147,7 +167,11 @@ public class Scraper {
 			}
 			client.close();
 			return result;
-		} catch (Exception e) {
+		}catch (FailingHttpStatusCodeException httperr) {
+			if(httperr.getStatusCode() == 404) {
+				ErrorHandling.NotFoundError404();
+			}
+		}catch (Exception e) {
 			System.out.println(e);
 		}
 		return null;
