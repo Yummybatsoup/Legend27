@@ -12,6 +12,7 @@ public class Slot {
 	private LocalTime end;
 	private String venue;
 	private String section;
+	private String instructor;
 	public static final String DAYS[] = {"Mo", "Tu", "We", "Th", "Fr", "Sa"};
 	public static final Map<String, Integer> DAYS_MAP = new HashMap<String, Integer>();
 	static {
@@ -27,6 +28,7 @@ public class Slot {
 		s.end = this.end;
 		s.venue = this.venue;
 		s.section = this.section;
+		s.instructor = this.instructor;
 		return s;
 	}
 	public String toString() {
@@ -106,5 +108,19 @@ public class Slot {
 	 */
 	public String getSection() {
 		return section;
+	}
+	
+	/**
+	 * @return the instructor
+	 */
+	public String getInstructor() {
+		return instructor;
+	}
+
+	/**
+	 * @param instructor the instructor to set
+	 */
+	public void setInstructor(String instructor) {
+		this.instructor = instructor;
 	}
 }

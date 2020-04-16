@@ -81,6 +81,7 @@ import org.apache.http.client.HttpResponseException;
 public class Scraper {
 	private WebClient client;
 	private String section = "";
+	private String instructor = "";
 
 	/**
 	 * Default Constructor 
@@ -92,8 +93,9 @@ public class Scraper {
 	}
 
 	private void addSlot(HtmlElement e, Course c, boolean secondRow) {
-		/*
-		for(int i=0; i<5 ;i++) {
+		
+/*
+		for(int i=0; i<6 ;i++) {
 			if (e.getChildNodes().get(i) != null)
 				System.out.println(i+ e.getChildNodes().get(i).asText());
 		}
@@ -104,7 +106,13 @@ public class Scraper {
 		if (!secondRow) {
 			section = e.getChildNodes().get(1).asText().split(" ")[0]; 
 		}
+		if (e.getChildNodes().get(5) != null) {	
+			instructor = e.getChildNodes().get(5).asText();
+//			System.out.println(instructor);
+		}
 		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
+		
+		
 		if (times[0].equals("TBA"))
 			return;
 		for (int j = 0; j < times[0].length(); j+=2) {
@@ -112,6 +120,7 @@ public class Scraper {
 			if (Slot.DAYS_MAP.get(code) == null)
 				break;
 			Slot s = new Slot();
+			s.setInstructor(instructor);
 			s.setSection(section);
 			s.setDay(Slot.DAYS_MAP.get(code));
 			s.setStart(times[1]);
