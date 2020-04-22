@@ -98,12 +98,18 @@ public class Controller {
     		textAreaConsole.setText(ErrorHandling.getErrorMessage());
     	}
     	else {
+   		int TotalNumOfCourses =0;
     	int TotalNumOfSlots =0;
     	LocalTime time =  LocalTime.of(15, 10, 00, 0000);
     	ArrayList<String> InstructorArr = new ArrayList<String>();
     	ArrayList<String> UnavInstructorArr = new ArrayList<String>();
     	for (Course c : v) {
     		TotalNumOfSlots += c.getNumSlots();
+    		if (c.getNumSlots() != 0) {
+//    			System.out.println(c.getNumSlots());
+    			TotalNumOfCourses++;
+    		}
+    		
     		for (int i = 0; i < c.getNumSlots(); i++) {
 				Slot t = c.getSlot(i);
 				String instr = t.getInstructor();
@@ -124,21 +130,12 @@ public class Controller {
     	//Make array sorted and  distinct
      	List<String> DistinctInstructorArr = InstructorArr.stream().sorted().distinct().collect(Collectors.toList());
      	List<String> DistinctUnavInstructorArr = UnavInstructorArr.stream().sorted().distinct().collect(Collectors.toList());
-/*
-     	System.out.println("Before");
-     	for(String s :DistinctInstructorArr ) {
-     		System.out.println(s);
-     	}
-*/
+     
+     	//Remove unavailable
      	DistinctInstructorArr.removeAll(DistinctUnavInstructorArr);
-/*
-     	System.out.println("After");
-     	for(String s :DistinctInstructorArr ) {
-     		System.out.println(s);
-     	}
- */
+
     	//TextAreaConsole controller
-    	textAreaConsole.setText("Total Number of courses: " + v.size() ); //TODO need to check exclusion		
+    	textAreaConsole.setText("Total Number of courses: " + TotalNumOfCourses ); 		
 		textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of slots: " + TotalNumOfSlots );
 
 		textAreaConsole.setText(textAreaConsole.getText() + "\n" + 
@@ -157,26 +154,26 @@ public class Controller {
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}
     	}
-    	
-    	
-    	//Add a random block on Saturday
+ 	    	
+    }
+    
+    public void timetable(List<Course> courses) {
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
-    	Label randomLabel = new Label("COMP1022\nL1");
-    	Random r = new Random();
-    	double start = (r.nextInt(10) + 1) * 20 + 40;
-
+    	for(Course c: courses) {
+    	Slot s = c.getSlot(0);
+    	Label randomLabel = new Label(c.getTitle());
+    	double startY = (s.getStartHour()) * 20 + 40 + s.getStartMinute()*10/30;
+    	double startX = s.getDay()*100;
     	randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-    	randomLabel.setLayoutX(600.0);
-    	randomLabel.setLayoutY(start);
+    	randomLabel.setLayoutX(startX);
+    	randomLabel.setLayoutY(startY);
     	randomLabel.setMinWidth(100.0);
     	randomLabel.setMaxWidth(100.0);
     	randomLabel.setMinHeight(60);
     	randomLabel.setMaxHeight(60);
     
     	ap.getChildren().addAll(randomLabel);
-    	
-    	
-    	
+    	}
     }
     
     public boolean equals(String str) {
