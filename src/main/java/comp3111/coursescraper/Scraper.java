@@ -80,7 +80,7 @@ import org.apache.http.client.HttpResponseException;
  */
 public class Scraper {
 	private WebClient client;
-	private String section = "";
+	private String title = "";
 	private String instructor = "";
 
 	/**
@@ -92,7 +92,7 @@ public class Scraper {
 		client.getOptions().setJavaScriptEnabled(false);
 	}
 
-	private void addSlot(HtmlElement e, Course c, boolean secondRow) {
+	private void addSlot(HtmlElement e, Section section, boolean secondRow) {
 		
 /*
 		for(int i=0; i<6 ;i++) {
@@ -104,7 +104,8 @@ public class Scraper {
 		
 		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split(" ");
 		if (!secondRow) {
-			section = e.getChildNodes().get(1).asText().split(" ")[0]; 
+			title = e.getChildNodes().get(1).asText().split(" ")[0];
+			section.setTitle(title);
 		}
 		if (e.getChildNodes().get(5) != null) {	
 			instructor = e.getChildNodes().get(5).asText();
@@ -121,12 +122,11 @@ public class Scraper {
 				break;
 			Slot s = new Slot();
 			s.setInstructor(instructor);
-			s.setSection(section);
 			s.setDay(Slot.DAYS_MAP.get(code));
 			s.setStart(times[1]);
 			s.setEnd(times[3]);
 			s.setVenue(venue);
-			c.addSlot(s);	
+			section.addSlot(s);	
 		}
 
 	}
@@ -166,10 +166,12 @@ public class Scraper {
 				
 				List<?> sections = (List<?>) htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
 				for ( HtmlElement e: (List<HtmlElement>)sections) {
-					addSlot(e, c, false);
+					Section s = new Section();
+					addSlot(e, s, false);
 					e = (HtmlElement)e.getNextSibling();
 					if (e != null && !e.getAttribute("class").contains("newsect"))
-						addSlot(e, c, true);
+						addSlot(e, s, true);
+					c.addSection(s);
 				}
 				
 				result.add(c);
