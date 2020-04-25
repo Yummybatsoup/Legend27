@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Arrays;
 public class Controller {
 
     @FXML
@@ -109,7 +110,7 @@ public class Controller {
     private CheckBox checkboxExc;
 
     @FXML
-    private CheckBox checkboxLabtut;
+    private CheckBox checkboxLab;
     
     @FXML
     void buttonselectall() {
@@ -126,7 +127,8 @@ public class Controller {
     		checkboxSat.setSelected(true);
     		checkboxCom.setSelected(true);
     		checkboxExc.setSelected(true);
-    		checkboxLabtut.setSelected(true);
+    		checkboxLab.setSelected(true);
+    		search();
     	}
     	else
     	{
@@ -141,13 +143,15 @@ public class Controller {
     		checkboxSat.setSelected(false);
     		checkboxCom.setSelected(false);
     		checkboxExc.setSelected(false);
-    		checkboxLabtut.setSelected(false);
+    		checkboxLab.setSelected(false);
+    		search();
     	}
     }
-    void clickAM() {
-    	
+    
+    @FXML
+    void filter() {
+    	search();
     }
-
     
     private Scraper scraper = new Scraper();
     
@@ -221,8 +225,72 @@ public class Controller {
 				textAreaConsole.setText(textAreaConsole.getText() + "\n" + i);
 			}
 			
-			
+			boolean all_false[] = {false, false, false, false, false, false};
 	    	for (Course c : v) {
+	    		if (checkboxExc.isSelected())
+	    			if (c.getExclusion() != "null")
+	    				continue;
+	    		if (checkboxCom.isSelected())
+	    			if (!c.getCC())
+	    				continue;
+	    		if (checkboxLab.isSelected())
+	    			if (!c.gethaslabortut())
+	    				continue;
+	    		boolean days[] = {checkboxMon.isSelected(), checkboxTue.isSelected(), checkboxWed.isSelected(), 
+	    				checkboxThu.isSelected(), checkboxFri.isSelected(), checkboxSat.isSelected()};
+	    		for (int i = 0; i < c.getNumSections(); i++) {
+	    			Section s = c.getSection(i);
+	    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+	    				int day = s.getSlot(j).getDay();
+	    				days[day] = false;
+	    			}
+	    		}
+	    		if (!Arrays.equals(all_false, days))
+	    			continue;
+	    		
+	    		boolean valid = false;
+	    		if (checkboxAM.isSelected() && checkboxPM.isSelected()){
+	    			for (int i = 0; i < c.getNumSections(); i++) {
+		    			Section s = c.getSection(i);
+		    			boolean haveAM = false;
+		    			boolean havePM = false;
+		    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+		    				if(s.getSlot(j).getStartHour() < 12 && s.getSlot(j).getEndHour() >= 12)
+		    					valid = true;
+		    				if(s.getSlot(j).getEndHour() < 12)
+		    					haveAM = true;
+		    				if(s.getSlot(j).getEndHour() >= 12)
+		    					havePM = true;
+		    			}
+		    			if(haveAM == true && havePM == true)
+		    				valid = true;
+	    			}
+	    		}
+	    		else if (checkboxAM.isSelected()) {
+	    			for (int i = 0; i < c.getNumSections(); i++) {
+		    			Section s = c.getSection(i);
+		    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+		    				if(s.getSlot(j).getEndHour() < 12)
+		    					valid = true;
+		    			}
+	    			}
+	    		}
+	    		else if (checkboxPM.isSelected()) {
+	    			for (int i = 0; i < c.getNumSections(); i++) {
+		    			Section s = c.getSection(i);
+		    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+		    				if(s.getSlot(j).getStartHour() >= 12)
+		    					valid = true;
+		    			}
+	    			}
+	    		}
+	    		else
+	    			valid = true;
+	    		if(!valid)
+	    			continue;
+	    		
+	    			
+	    		
 	    		String newline = c.getTitle() + "\n";
 	    		for (int i = 0; i < c.getNumSections(); i++) {
 	    			Section s = c.getSection(i);
