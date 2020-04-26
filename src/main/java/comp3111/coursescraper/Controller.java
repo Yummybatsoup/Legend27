@@ -111,7 +111,7 @@ public class Controller {
 	    		
 	    		for (int i = 0; i < c.getNumSections(); i++) {
 	    			Section s = c.getSection(i);
-	    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+	    			for (int j = 0; j < s.getNumSlots(); j++) {
 					Slot t = s.getSlot(j);
 					String instr = t.getInstructor();
 					if (!instr.isEmpty()){
@@ -134,6 +134,8 @@ public class Controller {
 	     
 	     	//Remove unavailable
 	     	DistinctInstructorArr.removeAll(DistinctUnavInstructorArr);
+	     	//Remove TBA
+	     	DistinctInstructorArr.remove("TBA");
 	
 	    	//TextAreaConsole controller
 	    	textAreaConsole.setText("Total Number of courses: " + TotalNumOfCourses ); 		
@@ -145,14 +147,19 @@ public class Controller {
 				textAreaConsole.setText(textAreaConsole.getText() + "\n" + i);
 			}
 			
+			textAreaConsole.setText(textAreaConsole.getText() + "\n");
 			
 	    	for (Course c : v) {
+//	    		System.out.println(c.getNumSections()+"  "+ c.getNumSlots());
+	    		if (c.getNumSlots() == 0){
+	    			continue;
+	    		}
 	    		String newline = c.getTitle() + "\n";
 	    		for (int i = 0; i < c.getNumSections(); i++) {
 	    			Section s = c.getSection(i);
-	    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+	    			for (int j = 0; j < s.getNumSlots(); j++) {
 	    				Slot t = s.getSlot(j);
-	    				newline += "Section:" + s.getTitle() + " Slot " + i + ":" + t + "\n";
+	    				newline += "Section:" + s.getTitle() + " Slot " + (j+1) + ":" + t + "\n";
 	    			}
 	    		}
 	    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
