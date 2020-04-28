@@ -103,15 +103,27 @@ public class Controller {
 		List<String> subjects = scraper.searchSubject(baseurl, term, home);
 		
 		ALL_SUBJECT_COUNT = subjects.size();
+		
+		double subject_scraped = 0;
+		double progress = 0;
+		
 		System.out.println(ALL_SUBJECT_COUNT);
 		
+		// progressbar.progressProperty().bind(progress);
+		
 		for (String sub:(List<String>)subjects) {
-			// List<Course> courses = scraper.scrape(baseurl, term, sub);
+			List<Course> courses = scraper.scrape(baseurl, term, sub);
 			System.out.println(sub);
 			
 			textAreaConsole.setText(textAreaConsole.getText() + sub + " is done \n");
 			
-			// TOTAL_NUMBER_OF_COURSES += courses.size();
+			TOTAL_NUMBER_OF_COURSES += courses.size();
+			subject_scraped += 1;
+			
+			progress = subject_scraped / ALL_SUBJECT_COUNT;
+			
+			// progressbar.setProgress(progress);
+			System.out.println(progressbar.getProgress());
 		}
     	
     }
