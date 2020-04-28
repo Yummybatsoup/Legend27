@@ -8,8 +8,10 @@ public class Course {
 	private String title ; 
 	private String description ;
 	private String exclusion;
+	private boolean hasCC;
 	private Section [] sections;
 	private int numSections;
+	private boolean haslabortut;
 	
 	public Course() {
 		sections = new Section[DEFAULT_MAX_Section];
@@ -70,6 +72,25 @@ public class Course {
 	 */
 	public void setExclusion(String exclusion) {
 		this.exclusion = exclusion;
+	}
+	
+	
+	public boolean getCC() {
+		return hasCC;
+	}
+
+	
+	public void setCC(boolean cc) {
+		this.hasCC = cc;
+	}
+	
+	public boolean gethaslabortut() {
+		return haslabortut;
+	}
+
+	
+	public void sethaslabortut(boolean haslabortut) {
+		this.haslabortut = haslabortut;
 	}
 
 	/**
