@@ -3,7 +3,7 @@ package comp3111.coursescraper;
 
 
 public class Course {
-	private static final int DEFAULT_MAX_Section = 20;
+	private static final int DEFAULT_MAX_Section = 50;
 	
 	private String title ; 
 	private String description ;
