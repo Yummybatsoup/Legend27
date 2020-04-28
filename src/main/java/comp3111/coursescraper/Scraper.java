@@ -187,5 +187,23 @@ public class Scraper {
 		}
 		return null;
 	}
+	
+	public List<String> searchSubject(String baseurl, String term, String home) throws Exception{
+
+	    
+    	HtmlPage home_page = client.getPage(baseurl + "/" + term + "/subject/" + home);
+    	
+    	//Create a list containing all the subjects HtmlElement
+		List<?> subjects = (List<?>) home_page.getByXPath("//div[@class='depts']/a");
+		
+		Vector<String> subs = new Vector<String>();
+		
+		for (HtmlElement s:(List<HtmlElement>)subjects) {
+			String sub = s.asText();
+			subs.add(sub);
+		}
+		client.close();
+		return subs;
+	}
 
 }

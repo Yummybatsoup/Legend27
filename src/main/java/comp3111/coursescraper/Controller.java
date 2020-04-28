@@ -1,6 +1,18 @@
 package comp3111.coursescraper;
 
+import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.DomText;
+
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.time.LocalTime;
 
 import javafx.fxml.FXML;
@@ -75,8 +87,32 @@ public class Controller {
     
     private Scraper scraper = new Scraper();
     
+    int TOTAL_NUMBER_OF_COURSES;
+    int ALL_SUBJECT_COUNT;
+    
     @FXML
-    void allSubjectSearch() {
+    void allSubjectSearch() throws Exception {
+    	WebClient client = new WebClient();
+    	String baseurl = textfieldURL.getText();
+    	String term = textfieldTerm.getText();
+    	String title = "";
+    	String instructor = "";
+    	String home = "ACCT";
+    	    	
+    	//Create a list containing all the subjects HtmlElement
+		List<String> subjects = scraper.searchSubject(baseurl, term, home);
+		
+		ALL_SUBJECT_COUNT = subjects.size();
+		System.out.println(ALL_SUBJECT_COUNT);
+		
+		for (String sub:(List<String>)subjects) {
+			// List<Course> courses = scraper.scrape(baseurl, term, sub);
+			System.out.println(sub);
+			
+			textAreaConsole.setText(textAreaConsole.getText() + sub + " is done \n");
+			
+			// TOTAL_NUMBER_OF_COURSES += courses.size();
+		}
     	
     }
 
