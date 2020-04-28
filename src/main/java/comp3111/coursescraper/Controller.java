@@ -1,22 +1,10 @@
 package comp3111.coursescraper;
 
-import java.net.MalformedURLException;
-import java.net.URLEncoder;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.DomText;
-
-import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.time.LocalTime;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -35,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Arrays;
 public class Controller {
 
     @FXML
@@ -85,6 +74,83 @@ public class Controller {
     @FXML
     private TextArea textAreaConsole;
     
+    @FXML
+    private Button buttonselect;
+    
+    @FXML
+    private CheckBox checkboxAM;
+
+    @FXML
+    private CheckBox checkboxPM;
+
+    @FXML
+    private CheckBox checkboxMon;
+
+    @FXML
+    private CheckBox checkboxTue;
+
+    @FXML
+    private CheckBox checkboxWed;
+
+    @FXML
+    private CheckBox checkboxThu;
+
+    @FXML
+    private CheckBox checkboxFri;
+
+    @FXML
+    private CheckBox checkboxSat;
+    
+    @FXML
+    private CheckBox checkboxCom;
+
+    @FXML
+    private CheckBox checkboxExc;
+
+    @FXML
+    private CheckBox checkboxLab;
+    
+    @FXML
+    void buttonselectall() {
+    	if (buttonselect.getText().equals("Select All"))
+    	{
+    		buttonselect.setText("De-select All");
+    		checkboxAM.setSelected(true);
+    		checkboxPM.setSelected(true);
+    		checkboxMon.setSelected(true);
+    		checkboxTue.setSelected(true);
+    		checkboxWed.setSelected(true);
+    		checkboxThu.setSelected(true);
+    		checkboxFri.setSelected(true);
+    		checkboxSat.setSelected(true);
+    		checkboxCom.setSelected(true);
+    		checkboxExc.setSelected(true);
+    		checkboxLab.setSelected(true);
+    		search();
+    	}
+    	else
+    	{
+    		buttonselect.setText("Select All");
+    		checkboxAM.setSelected(false);
+    		checkboxPM.setSelected(false);
+    		checkboxMon.setSelected(false);
+    		checkboxTue.setSelected(false);
+    		checkboxWed.setSelected(false);
+    		checkboxThu.setSelected(false);
+    		checkboxFri.setSelected(false);
+    		checkboxSat.setSelected(false);
+    		checkboxCom.setSelected(false);
+    		checkboxExc.setSelected(false);
+    		checkboxLab.setSelected(false);
+    		search();
+    	}
+    }
+    
+    @FXML
+    void filter() {
+    	search();
+    }
+    
     private Scraper scraper = new Scraper();
     
     int TOTAL_NUMBER_OF_COURSES;
@@ -92,7 +158,7 @@ public class Controller {
     
     @FXML
     void allSubjectSearch() throws Exception {
-    	WebClient client = new WebClient();
+    	// WebClient client = new WebClient();
     	String baseurl = textfieldURL.getText();
     	String term = textfieldTerm.getText();
     	String title = "";
@@ -159,7 +225,7 @@ public class Controller {
 	    		
 	    		for (int i = 0; i < c.getNumSections(); i++) {
 	    			Section s = c.getSection(i);
-	    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+	    			for (int j = 0; j < s.getNumSlots(); j++) {
 					Slot t = s.getSlot(j);
 					String instr = t.getInstructor();
 					if (!instr.isEmpty()){
@@ -182,6 +248,8 @@ public class Controller {
 	     
 	     	//Remove unavailable
 	     	DistinctInstructorArr.removeAll(DistinctUnavInstructorArr);
+	     	//Remove TBA
+	     	DistinctInstructorArr.remove("TBA");
 	
 	    	//TextAreaConsole controller
 	    	textAreaConsole.setText("Total Number of courses: " + TotalNumOfCourses ); 		
@@ -193,19 +261,91 @@ public class Controller {
 				textAreaConsole.setText(textAreaConsole.getText() + "\n" + i);
 			}
 			
-			
+
+			boolean all_false[] = {false, false, false, false, false, false};
 	    	for (Course c : v) {
-	    		String newline = c.getTitle() + "\n";
+	    		if (checkboxExc.isSelected())
+	    			if (c.getExclusion() != "null")
+	    				continue;
+	    		if (checkboxCom.isSelected())
+	    			if (!c.getCC())
+	    				continue;
+	    		if (checkboxLab.isSelected())
+	    			if (!c.gethaslabortut())
+	    				continue;
+	    		boolean days[] = {checkboxMon.isSelected(), checkboxTue.isSelected(), checkboxWed.isSelected(), 
+	    				checkboxThu.isSelected(), checkboxFri.isSelected(), checkboxSat.isSelected()};
 	    		for (int i = 0; i < c.getNumSections(); i++) {
 	    			Section s = c.getSection(i);
 	    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+	    				int day = s.getSlot(j).getDay();
+	    				days[day] = false;
+	    			}
+	    		}
+	    		if (!Arrays.equals(all_false, days))
+	    			continue;
+	    		
+	    		boolean valid = false;
+	    		if (checkboxAM.isSelected() && checkboxPM.isSelected()){
+	    			for (int i = 0; i < c.getNumSections(); i++) {
+		    			Section s = c.getSection(i);
+		    			boolean haveAM = false;
+		    			boolean havePM = false;
+		    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+		    				if(s.getSlot(j).getStartHour() < 12 && s.getSlot(j).getEndHour() >= 12)
+		    					valid = true;
+		    				if(s.getSlot(j).getEndHour() < 12)
+		    					haveAM = true;
+		    				if(s.getSlot(j).getEndHour() >= 12)
+		    					havePM = true;
+		    			}
+		    			if(haveAM == true && havePM == true)
+		    				valid = true;
+	    			}
+	    		}
+	    		else if (checkboxAM.isSelected()) {
+	    			for (int i = 0; i < c.getNumSections(); i++) {
+		    			Section s = c.getSection(i);
+		    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+		    				if(s.getSlot(j).getEndHour() < 12)
+		    					valid = true;
+		    			}
+	    			}
+	    		}
+	    		else if (checkboxPM.isSelected()) {
+	    			for (int i = 0; i < c.getNumSections(); i++) {
+		    			Section s = c.getSection(i);
+		    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+		    				if(s.getSlot(j).getStartHour() >= 12)
+		    					valid = true;
+		    			}
+	    			}
+	    		}
+	    		else
+	    			valid = true;
+	    		
+	    		if(!valid)
+	    			continue;
+	    		
+	    			
+			textAreaConsole.setText(textAreaConsole.getText() + "\n");
+			
+//	    	for (Course c : v) {
+//	    		System.out.println(c.getNumSections()+"  "+ c.getNumSlots());
+//	    		if (c.getNumSlots() == 0)
+//	    			continue;
+	    		
+	    		String newline = c.getTitle() + "\n";
+	    		for (int i = 0; i < c.getNumSections(); i++) {
+	    			Section s = c.getSection(i);
+	    			for (int j = 0; j < s.getNumSlots(); j++) {
 	    				Slot t = s.getSlot(j);
-	    				newline += "Section:" + s.getTitle() + " Slot " + i + ":" + t + "\n";
+	    				newline += "Section:" + s.getTitle() + " Slot " + (j+1) + ":" + t + "\n";
 	    			}
 	    		}
 	    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
-	    	}
-	    }
+	    		}
+    	}
     }
     
 	public void timetable(List<Course> courses) {

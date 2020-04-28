@@ -50,6 +50,12 @@ public class Section {
 	public void setNumSlots(int numSlots) {
 		this.numSlots = numSlots;
 	}
+	
+	public String getSlotToString(int i) {
+		if (i >= 0 && i < numSlots)
+			return slots[i].toString();
+		return null;
+	}
 }
 
 

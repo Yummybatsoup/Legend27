@@ -116,6 +116,7 @@ public class Scraper {
 		
 		if (times[0].equals("TBA"))
 			return;
+		
 		for (int j = 0; j < times[0].length(); j+=2) {
 			String code = times[0].substring(j , j + 2);
 			if (Slot.DAYS_MAP.get(code) == null)
@@ -153,6 +154,7 @@ public class Scraper {
 				
 				List<?> popupdetailslist = (List<?>) htmlItem.getByXPath(".//div[@class='popupdetail']/table/tbody/tr");
 				HtmlElement exclusion = null;
+				HtmlElement attribute = null;
 				
 				//get exclusion courses
 				for ( HtmlElement e : (List<HtmlElement>)popupdetailslist) {
@@ -161,8 +163,12 @@ public class Scraper {
 					if (t.asText().equals("EXCLUSION")) {
 						exclusion = d;
 					}
+					if (t.asText().equals("ATTRIBUTES")) {
+						attribute = d;
+					}
 				}
 				c.setExclusion((exclusion == null ? "null" : exclusion.asText()));
+				c.setCC(attribute == null ? false : (attribute.asText().contains("Common Core") ? true : false));
 				
 				List<?> sections = (List<?>) htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
 				for ( HtmlElement e: (List<HtmlElement>)sections) {
@@ -173,6 +179,17 @@ public class Scraper {
 						addSlot(e, s, true);
 					c.addSection(s);
 				}
+				
+				int numsec = c.getNumSections();
+				if (numsec != 0) {
+					String sectitle = c.getSection(numsec - 1).getTitle();
+					if (sectitle.contains("LA") || sectitle.contains("T"))
+						c.sethaslabortut(true);
+					else
+						c.sethaslabortut(false);
+				}
+				else
+					c.sethaslabortut(false);
 				
 				result.add(c);
 			}
