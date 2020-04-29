@@ -43,6 +43,9 @@ public class Section {
 		numSlots = 0;
 		this.enrolled.set(false);
 		
+		// added a listener function: this lambda function will be executed whenever the enrolled property is changed
+		// in this case: whenever the check box is clicked to change from enrol or un-enrol to another 
+		// lambda function: where (v, oldValue, newValue) is the parameter and the code inside {} will be executed
 		this.enrolledProperty().addListener( (v, oldValue, newValue) -> {
 			this.setEnrolled(newValue);
 			
