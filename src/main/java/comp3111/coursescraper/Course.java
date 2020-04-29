@@ -5,6 +5,9 @@ package comp3111.coursescraper;
 public class Course {
 	private static final int DEFAULT_MAX_Section = 50;
 	
+	// code refer to the course code
+	private String code;
+	
 	private String title ; 
 	private String description ;
 	private String exclusion;
@@ -14,6 +17,7 @@ public class Course {
 	private boolean haslabortut;
 	
 	public Course() {
+		code = "UST0000";
 		sections = new Section[DEFAULT_MAX_Section];
 		for (int i = 0; i < DEFAULT_MAX_Section; i++) 
 			sections[i] = null;
@@ -115,7 +119,8 @@ public class Course {
 		return num;
 	}
 	
-	
-	
+	public String getCourseCode() {
+		return this.code;
+	}
 
 }

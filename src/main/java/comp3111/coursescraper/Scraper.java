@@ -128,6 +128,7 @@ public class Scraper {
 			s.setEnd(times[3]);
 			s.setVenue(venue);
 			section.addSlot(s);	
+			section.setInstructor(instructor);
 		}
 
 	}
@@ -170,6 +171,7 @@ public class Scraper {
 				c.setExclusion((exclusion == null ? "null" : exclusion.asText()));
 				c.setCC(attribute == null ? false : (attribute.asText().contains("Common Core") ? true : false));
 				
+				// Scrape Sections
 				List<?> sections = (List<?>) htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
 				for ( HtmlElement e: (List<HtmlElement>)sections) {
 					Section s = new Section();
@@ -177,6 +179,7 @@ public class Scraper {
 					e = (HtmlElement)e.getNextSibling();
 					if (e != null && !e.getAttribute("class").contains("newsect"))
 						addSlot(e, s, true);
+					s.setCourse(c);
 					c.addSection(s);
 				}
 				
