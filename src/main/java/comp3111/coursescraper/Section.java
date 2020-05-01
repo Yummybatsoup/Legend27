@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import java.util.List;
 import java.util.Vector;
 
+
 public class Section {
 	private static final int DEFAULT_MAX_SLOT = 3;
 	
@@ -20,7 +21,7 @@ public class Section {
 	private BooleanProperty enrolled = new SimpleBooleanProperty();
 	
 	// Keep track of all the sections that are enrolled 
-	public static List<Section> ENROLLED_SECTIONS = new Vector<Section>();
+	// public static List<Section> ENROLLED_SECTIONS = new Vector<Section>();
 	
 	@Override
 	public Section clone() {
@@ -45,7 +46,9 @@ public class Section {
 		
 		// added a listener function: this lambda function will be executed whenever the enrolled property is changed
 		// in this case: whenever the check box is clicked to change from enrol or un-enrol to another 
-		// lambda function: where (v, oldValue, newValue) is the parameter and the code inside {} will be executed
+		// lambda function: where (v, oldValue, newValue) is the parameter and the code inside {} will be execut
+
+		/*
 		this.enrolledProperty().addListener( (v, oldValue, newValue) -> {
 			this.setEnrolled(newValue);
 			
@@ -59,8 +62,9 @@ public class Section {
 			
 			System.out.println("");
 			System.out.println(this.isEnrolled() + " : Listener worked");
+			
 		});
-		
+		*/
 	}
 	
 	public String getTitle() {
