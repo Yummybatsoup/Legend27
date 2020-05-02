@@ -302,6 +302,7 @@ public class Controller {
     		if (!Arrays.equals(all_false, days))
     			continue;
     		
+    		//Check AM/PM
     		boolean valid = false;
     		if (checkboxAM.isSelected() && checkboxPM.isSelected()){
     			for (int i = 0; i < c.getNumSections(); i++) {
@@ -311,9 +312,9 @@ public class Controller {
 	    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
 	    				if(s.getSlot(j).getStartHour() < 12 && s.getSlot(j).getEndHour() >= 12)
 	    					valid = true;
-	    				if(s.getSlot(j).getEndHour() < 12)
+	    				if(s.getSlot(j).getStartHour() < 12)
 	    					haveAM = true;
-	    				if(s.getSlot(j).getEndHour() >= 12)
+	    				if(s.getSlot(j).getStartHour() >= 12)
 	    					havePM = true;
 	    			}
 	    			if(haveAM == true && havePM == true)
@@ -324,7 +325,7 @@ public class Controller {
     			for (int i = 0; i < c.getNumSections(); i++) {
 	    			Section s = c.getSection(i);
 	    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
-	    				if(s.getSlot(j).getEndHour() < 12)
+	    				if(s.getSlot(j).getStartHour() < 12)
 	    					valid = true;
 	    			}
     			}
@@ -356,7 +357,7 @@ public class Controller {
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     		*/
     		this.course_filter.add(c);
-    		textAreaConsole.setText("Filtered: \n");
+    		textAreaConsole.setText("Filtered:");
     	}
     	
     	section_filter = new Vector<Section>();
@@ -515,22 +516,22 @@ public class Controller {
     	}
     }
     
-	public void timetable(List<Course> courses) {
+	public void timetable(List<Section> sections) {
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
-    	for(Course c: courses) {
-    	Slot s = c.getSection(0).getSlot(0);
-    	Label randomLabel = new Label(c.getTitle());
-    	double startY = (s.getStartHour()) * 20 + 40 + s.getStartMinute()*10/30;
-    	double startX = s.getDay()*100;
-    	randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-    	randomLabel.setLayoutX(startX);
-    	randomLabel.setLayoutY(startY);
-    	randomLabel.setMinWidth(100.0);
-    	randomLabel.setMaxWidth(100.0);
-    	randomLabel.setMinHeight(60);
-    	randomLabel.setMaxHeight(60);
-    
-    	ap.getChildren().addAll(randomLabel);
+    	for(Section se: sections) {
+	    	Slot s = se.getSlot(0);
+	    	Label randomLabel = new Label(se.getCourseName());
+	    	double startY = (s.getStartHour()) * 20 + 40 + s.getStartMinute()*10/30;
+	    	double startX = s.getDay()*100;
+	    	randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+	    	randomLabel.setLayoutX(startX);
+	    	randomLabel.setLayoutY(startY);
+	    	randomLabel.setMinWidth(100.0);
+	    	randomLabel.setMaxWidth(100.0);
+	    	randomLabel.setMinHeight(60);
+	    	randomLabel.setMaxHeight(60);
+	    
+	    	ap.getChildren().addAll(randomLabel);
     	}
     }
     
