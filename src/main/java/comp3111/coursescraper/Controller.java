@@ -17,7 +17,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
-
+import javafx.util.Callback;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -25,6 +25,9 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -147,9 +150,12 @@ public class Controller {
     
     // keep track of all the sections that filtered, will updated after every filtering
     private List<Section> section_filter = new Vector<Section>();
+    
+    // keep track of all the sections that are enrolled in
+    private List<Section> section_enrolled = new Vector<Section>();
         
-    int TOTAL_NUMBER_OF_COURSES; // for task 5
-    int ALL_SUBJECT_COUNT; // for task 5
+    int TOTAL_NUMBER_OF_COURSES = 0; // for task 5
+    int ALL_SUBJECT_COUNT = 0; // for task 5
     
     // Control the table/anything need to be initialized when the controlled is constructed, used in task 3. task 4 should also need to modify this
     @FXML
@@ -160,13 +166,40 @@ public class Controller {
     	sectionColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
     	nameColumn.setCellValueFactory(new PropertyValueFactory<>("CourseName"));
     	instructorColumn.setCellValueFactory(new PropertyValueFactory<>("instructor"));
-    	enrolColumn.setCellValueFactory(new PropertyValueFactory<>("enrolled"));
-    	enrolColumn.setCellFactory(tc -> new CheckBoxTableCell<>());
+    	
+    	// the checkbox column
+    	enrolColumn.setCellValueFactory( c -> {
+    	      Section section = c.getValue();
+    	      CheckBox checkBox = new CheckBox();
+    	      checkBox.selectedProperty().setValue(section.isEnrolled());
+    	      
+    	      // add the listener: a function triggered whenever the check box is clicked
+    	      checkBox
+    	          .selectedProperty()
+    	          .addListener((ov, old_val, new_val) -> {
+    	        	  section.setEnrolled(new_val);
+    	        	  System.out.println(section.getTitle() + " " + section.getCourseName() + " " +  section.isEnrolled());
+    	        	  
+    	        	  if (section.isEnrolled())
+    	        		  section_enrolled.add(section);
+    	        	  else
+    	        		  section_enrolled.remove(section);
+    	        	  
+    	        	  System.out.println("In the section_enrolled: ");
+    	        	  
+    	        	  for (int i = 0; i < section_enrolled.size(); i++) {
+    	        		  System.out.println(section_enrolled.get(i).getTitle() + " " + section_enrolled.get(i).getCourseName() + " " +  section_enrolled.get(i).isEnrolled());
+    	        	  }
+    	          });
+    	      return new SimpleObjectProperty(checkBox);
+    	    });
+    	
     	
     	table.setItems(getEnrolSection());
     	table.setEditable(true);
     	
-    	//
+    	// task 5 initialize
+    	progressbar.setProgress(0.0);
     }
     
     public ObservableList<Section> getEnrolSection() {
@@ -352,13 +385,37 @@ public class Controller {
 		
 		ALL_SUBJECT_COUNT = subjects.size();
 		
-		double subject_scraped = 0;
-		double progress = 0;
-		
 		System.out.println(ALL_SUBJECT_COUNT);
 		
-		// progressbar.progressProperty().bind(progress);
+		class bg_Thread implements Runnable {
+			
+			double subject_scraped = 0;
+			double progress = 0;
+			
+			@Override
+			public void run() {
+				for (String sub:(List<String>) subjects) {
+					List<Course> courses = scraper.scrape(baseurl, term, sub);
+					System.out.println(sub);
+					
+					textAreaConsole.setText(textAreaConsole.getText() + sub + " is done \n");
+					
+					TOTAL_NUMBER_OF_COURSES += courses.size();
+					subject_scraped += 1;
+					
+					progress = subject_scraped / ALL_SUBJECT_COUNT;
+					
+					progressbar.setProgress(progress);
+					System.out.println(progressbar.getProgress());
+				}
+			}
+		}
 		
+		Thread th = new Thread(new bg_Thread());
+		th.start();
+		
+		// progressbar.progressProperty().bind(progress);
+		/*
 		for (String sub:(List<String>)subjects) {
 			List<Course> courses = scraper.scrape(baseurl, term, sub);
 			System.out.println(sub);
@@ -373,6 +430,7 @@ public class Controller {
 			// progressbar.setProgress(progress);
 			System.out.println(progressbar.getProgress());
 		}
+		*/
     	
     }
 
@@ -446,7 +504,7 @@ public class Controller {
 			// textAreaConsole.setText(textAreaConsole.getText() + "\t Before all_false");
 			
 			// reset the list
-			Section.ENROLLED_SECTIONS.clear();
+			section_enrolled.clear();
 			// reset the table
 			table.setItems(getEnrolSection());
 			
