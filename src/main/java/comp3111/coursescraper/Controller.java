@@ -178,18 +178,23 @@ public class Controller {
     	          .selectedProperty()
     	          .addListener((ov, old_val, new_val) -> {
     	        	  section.setEnrolled(new_val);
-    	        	  System.out.println(section.getTitle() + " " + section.getCourseName() + " " +  section.isEnrolled());
+    	        	  //System.out.println(section.getTitle() + " " + section.getCourseName() + " " +  section.isEnrolled());
     	        	  
     	        	  if (section.isEnrolled())
     	        		  section_enrolled.add(section);
     	        	  else
     	        		  section_enrolled.remove(section);
     	        	  
+    	        	  //task4
+    	        	  timetable(section_enrolled);
+    	        	  
+    	        	  /*
     	        	  System.out.println("In the section_enrolled: ");
     	        	  
     	        	  for (int i = 0; i < section_enrolled.size(); i++) {
     	        		  System.out.println(section_enrolled.get(i).getTitle() + " " + section_enrolled.get(i).getCourseName() + " " +  section_enrolled.get(i).isEnrolled());
     	        	  }
+    	        	  */
     	          });
     	      return new SimpleObjectProperty(checkBox);
     	    });
@@ -516,22 +521,43 @@ public class Controller {
     	}
     }
     
+    private List<Label> EnrolledLabel = new Vector<Label>();
+    
 	public void timetable(List<Section> sections) {
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
+    	
+    	ap.getChildren().removeAll(EnrolledLabel);
+    	EnrolledLabel.clear();
+    	
+    	//System.out.println("Timetable");
     	for(Section se: sections) {
-	    	Slot s = se.getSlot(0);
-	    	Label randomLabel = new Label(se.getCourseName());
-	    	double startY = (s.getStartHour()) * 20 + 40 + s.getStartMinute()*10/30;
-	    	double startX = s.getDay()*100;
-	    	randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-	    	randomLabel.setLayoutX(startX);
-	    	randomLabel.setLayoutY(startY);
-	    	randomLabel.setMinWidth(100.0);
-	    	randomLabel.setMaxWidth(100.0);
-	    	randomLabel.setMinHeight(60);
-	    	randomLabel.setMaxHeight(60);
-	    
-	    	ap.getChildren().addAll(randomLabel);
+    		//random colors background generator
+	    	double r1 = Math.random();
+	    	double r2 = Math.random();
+	    	double r3 = Math.random();
+    		for(int i = 0;i < se.getNumSlots();i++){
+    			//System.out.println(se.getCourseName());
+    	    	Slot s = se.getSlot(i);
+    	    	Label randomLabel = new Label(se.getCourseCode() + "\n" + se.getTitle());
+    	    	double startY = 40 + (s.getStartHour() - 9) * 20 + s.getStartMinute()*10/30;
+    	    	double startX = (s.getDay() + 1)*100;
+    	    	double Height = (s.getEndHour() - s.getStartHour()) * 20 + (s.getEndMinute() - s.getStartMinute()) *10/30;
+    	    	double Width = 100;
+    	    	//System.out.println(s.getStartHour() + "\n" + startX + "\n" + startY + "\n" + Height);
+    	    	randomLabel.setBackground(new Background(new BackgroundFill(Color.color(r1,r2,r3), CornerRadii.EMPTY, Insets.EMPTY)));
+    	    	randomLabel.setTextFill(Color.WHITE);
+    	    	randomLabel.setOpacity(0.8);
+    	    	randomLabel.setLayoutX(startX);
+    	    	randomLabel.setLayoutY(startY);
+    	    	randomLabel.setMinWidth(Width);
+    	    	randomLabel.setMaxWidth(Width);
+    	    	randomLabel.setMinHeight(Height);
+    	    	randomLabel.setMaxHeight(Height);
+    	    
+    	    	ap.getChildren().add(randomLabel);
+    	    	EnrolledLabel.add(randomLabel);
+    			
+    		}
     	}
     }
     
