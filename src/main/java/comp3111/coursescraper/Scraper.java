@@ -151,6 +151,8 @@ public class Scraper {
 				//get title
 				HtmlElement title = (HtmlElement) htmlItem.getFirstByXPath(".//h2");
 				c.setTitle(title.asText());
+				String coursecode = title.asText().split("\\s+")[0]+ title.asText().split("\\s+")[1];
+				c.setCourseCode(coursecode);
 				
 				
 				List<?> popupdetailslist = (List<?>) htmlItem.getByXPath(".//div[@class='popupdetail']/table/tbody/tr");
@@ -226,4 +228,9 @@ public class Scraper {
 		return subs;
 	}
 
+	//task 6 scrape SFQ
+	public List<String> findSFQ(String url,List<Section> enrolledsection){
+		
+		return null;
+	}
 }
