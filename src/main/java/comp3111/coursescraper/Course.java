@@ -49,6 +49,14 @@ public class Course {
 	public void setTitle(String title) {
 		this.title = title;
 	}
+	
+	/**
+	 * @param title the title to set
+	 */
+	public void setCourseCode(String code) {
+		this.code = code;
+	}
+
 
 	/**
 	 * @return the description
