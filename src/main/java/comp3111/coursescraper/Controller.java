@@ -39,220 +39,227 @@ import java.util.Vector;
 
 public class Controller {
 
-	@FXML
-	private Tab tabMain;
+    @FXML
+    private Tab tabMain;
 
-	@FXML
-	private TextField textfieldTerm;
+    @FXML
+    private TextField textfieldTerm;
 
-	@FXML
-	private TextField textfieldSubject;
+    @FXML
+    private TextField textfieldSubject;
 
-	@FXML
-	private Button buttonSearch;
+    @FXML
+    private Button buttonSearch;
 
-	@FXML
-	private TextField textfieldURL;
+    @FXML
+    private TextField textfieldURL;
 
-	@FXML
-	private Tab tabStatistic;
+    @FXML
+    private Tab tabStatistic;
 
-	@FXML
-	private ComboBox<?> comboboxTimeSlot;
+    @FXML
+    private ComboBox<?> comboboxTimeSlot;
 
-	@FXML
-	private Tab tabFilter;
+    @FXML
+    private Tab tabFilter;
 
-	@FXML
-	private Tab tabList;
+    @FXML
+    private Tab tabList;
+    
+    @FXML
+    private TableView<Section> table;
+    
+    @FXML
+    private TableColumn<Section, String> courseCodeColumn;
+    
+    @FXML
+    private TableColumn<Section, String> sectionColumn;
+    
+    @FXML
+    private TableColumn<Section, String> nameColumn;
+    
+    @FXML
+    private TableColumn<Section, String> instructorColumn;
+    
+    @FXML
+    private TableColumn<Section, Boolean> enrolColumn;
 
-	@FXML
-	private TableView<Section> table;
+    @FXML
+    private Tab tabTimetable;
 
-	@FXML
-	private TableColumn<Section, String> courseCodeColumn;
+    @FXML
+    private Tab tabAllSubject;
 
-	@FXML
-	private TableColumn<Section, String> sectionColumn;
+    @FXML
+    private ProgressBar progressbar;
 
-	@FXML
-	private TableColumn<Section, String> nameColumn;
+    @FXML
+    private TextField textfieldSfqUrl;
 
-	@FXML
-	private TableColumn<Section, String> instructorColumn;
+    @FXML
+    private Button buttonSfqEnrollCourse;
 
-	@FXML
-	private TableColumn<Section, Boolean> enrolColumn;
+    @FXML
+    private Button buttonInstructorSfq;
 
-	@FXML
-	private Tab tabTimetable;
+    @FXML
+    private TextArea textAreaConsole;
+    
+    @FXML
+    private Button buttonselect;
+    
+    @FXML
+    private CheckBox checkboxAM;
 
-	@FXML
-	private Tab tabAllSubject;
+    @FXML
+    private CheckBox checkboxPM;
 
-	@FXML
-	private ProgressBar progressbar;
+    @FXML
+    private CheckBox checkboxMon;
 
-	@FXML
-	private TextField textfieldSfqUrl;
+    @FXML
+    private CheckBox checkboxTue;
 
-	@FXML
-	private Button buttonSfqEnrollCourse;
+    @FXML
+    private CheckBox checkboxWed;
 
-	@FXML
-	private Button buttonInstructorSfq;
+    @FXML
+    private CheckBox checkboxThu;
 
-	@FXML
-	private TextArea textAreaConsole;
+    @FXML
+    private CheckBox checkboxFri;
 
-	@FXML
-	private Button buttonselect;
+    @FXML
+    private CheckBox checkboxSat;
+    
+    @FXML
+    private CheckBox checkboxCom;
 
-	@FXML
-	private CheckBox checkboxAM;
+    @FXML
+    private CheckBox checkboxExc;
 
-	@FXML
-	private CheckBox checkboxPM;
+    @FXML
+    private CheckBox checkboxLab;
+    
+    private Scraper scraper = new Scraper();
+    
+    // keep track of what courses we have scraped
+    private List<Course> course_scraped = new Vector<Course>();
+    
+    // keep track of all the courses that filtered, will updated after every filtering
+    private List<Course> course_filter = new Vector<Course>();
+    
+    // keep track of all the sections that filtered, will updated after every filtering
+    private List<Section> section_filter = new Vector<Section>();
+    
+    // keep track of all the sections that are enrolled in
+    private List<Section> section_enrolled = new Vector<Section>();
+        
+    int TOTAL_NUMBER_OF_COURSES = 0; // for task 5
+    int ALL_SUBJECT_COUNT = 0; // for task 5
+    
+    // Control the table/anything need to be initialized when the controlled is constructed, used in task 3. task 4 should also need to modify this
+    @FXML
+    public void initialize() {
+    	
+    	// For task 3 tableView initialization
+    	courseCodeColumn.setCellValueFactory(new PropertyValueFactory<>("CourseCode"));
+    	sectionColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+    	nameColumn.setCellValueFactory(new PropertyValueFactory<>("CourseName"));
+    	instructorColumn.setCellValueFactory(new PropertyValueFactory<>("instructor"));
+    	
+    	// the checkbox column
+    	enrolColumn.setCellValueFactory( c -> {
+    	      Section section = c.getValue();
+    	      CheckBox checkBox = new CheckBox();
+    	      checkBox.selectedProperty().setValue(section.isEnrolled());
+    	      
+    	      // add the listener: a function triggered whenever the check box is clicked
+    	      checkBox
+    	          .selectedProperty()
+    	          .addListener((ov, old_val, new_val) -> {
+    	        	  section.setEnrolled(new_val);
+    	        	  //System.out.println(section.getTitle() + " " + section.getCourseName() + " " +  section.isEnrolled());
+    	        	  
+    	        	  if (section.isEnrolled())
+    	        		  section_enrolled.add(section);
+    	        	  else
+    	        		  section_enrolled.remove(section);
+    	        	  
+    	        	  //task4
+    	        	  timetable(section_enrolled);
+    	        	  
+    	        	  /*
+    	        	  System.out.println("In the section_enrolled: ");
+    	        	  
+    	        	  for (int i = 0; i < section_enrolled.size(); i++) {
+    	        		  System.out.println(section_enrolled.get(i).getTitle() + " " + section_enrolled.get(i).getCourseName() + " " +  section_enrolled.get(i).isEnrolled());
+    	        	  }
+    	        	  */
+    	          });
+    	      return new SimpleObjectProperty(checkBox);
+    	    });
+    	
+    	
+    	table.setItems(getEnrolSection());
+    	table.setEditable(true);
+    	
+    	// task 5 initialize
+    	progressbar.setProgress(0.0);
+      
+      // task 6 initialize
+		  buttonSfqEnrollCourse.setDisable(true);
+    }
+    
+    public ObservableList<Section> getEnrolSection() {
+    	ObservableList<Section> sections = FXCollections.observableArrayList();
+    	
+    	for (Section s: section_filter) {
+    		sections.add(s);
+    	}
+    	
+    	return sections;
+    }
+    
+    @FXML
+    void buttonselectall() {
+    	if (buttonselect.getText().equals("Select All"))
+    	{
+    		buttonselect.setText("De-select All");
+    		checkboxAM.setSelected(true);
+    		checkboxPM.setSelected(true);
+    		checkboxMon.setSelected(true);
+    		checkboxTue.setSelected(true);
+    		checkboxWed.setSelected(true);
+    		checkboxThu.setSelected(true);
+    		checkboxFri.setSelected(true);
+    		checkboxSat.setSelected(true);
+    		checkboxCom.setSelected(true);
+    		checkboxExc.setSelected(true);
+    		checkboxLab.setSelected(true);
+    		search();
+    	}
+    	else
+    	{
+    		buttonselect.setText("Select All");
+    		checkboxAM.setSelected(false);
+    		checkboxPM.setSelected(false);
+    		checkboxMon.setSelected(false);
+    		checkboxTue.setSelected(false);
+    		checkboxWed.setSelected(false);
+    		checkboxThu.setSelected(false);
+    		checkboxFri.setSelected(false);
+    		checkboxSat.setSelected(false);
+    		checkboxCom.setSelected(false);
+    		checkboxExc.setSelected(false);
+    		checkboxLab.setSelected(false);
+    		search();
+    	}
+    }
+    
+    // Print the course info, used in search function and filter function
+    void printTextAreaConsole(List<Course> courses) {
 
-	@FXML
-	private CheckBox checkboxMon;
-
-	@FXML
-	private CheckBox checkboxTue;
-
-	@FXML
-	private CheckBox checkboxWed;
-
-	@FXML
-	private CheckBox checkboxThu;
-
-	@FXML
-	private CheckBox checkboxFri;
-
-	@FXML
-	private CheckBox checkboxSat;
-
-	@FXML
-	private CheckBox checkboxCom;
-
-	@FXML
-	private CheckBox checkboxExc;
-
-	@FXML
-	private CheckBox checkboxLab;
-
-	private Scraper scraper = new Scraper();
-
-	// keep track of what courses we have scraped
-	private List<Course> course_scraped = new Vector<Course>();
-
-	// keep track of all the courses that filtered, will updated after every
-	// filtering
-	private List<Course> course_filter = new Vector<Course>();
-
-	// keep track of all the sections that filtered, will updated after every
-	// filtering
-	private List<Section> section_filter = new Vector<Section>();
-
-	// keep track of all the sections that are enrolled in
-	private List<Section> section_enrolled = new Vector<Section>();
-
-	int TOTAL_NUMBER_OF_COURSES = 0; // for task 5
-	int ALL_SUBJECT_COUNT = 0; // for task 5
-
-	// Control the table/anything need to be initialized when the controlled is
-	// constructed, used in task 3. task 4 should also need to modify this
-	@FXML
-	public void initialize() {
-
-		// For task 3 tableView initialization
-		courseCodeColumn.setCellValueFactory(new PropertyValueFactory<>("CourseCode"));
-		sectionColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-		nameColumn.setCellValueFactory(new PropertyValueFactory<>("CourseName"));
-		instructorColumn.setCellValueFactory(new PropertyValueFactory<>("instructor"));
-
-		// the checkbox column
-		enrolColumn.setCellValueFactory(c -> {
-			Section section = c.getValue();
-			CheckBox checkBox = new CheckBox();
-			checkBox.selectedProperty().setValue(section.isEnrolled());
-
-			// add the listener: a function triggered whenever the check box is clicked
-			checkBox.selectedProperty().addListener((ov, old_val, new_val) -> {
-				section.setEnrolled(new_val);
-				System.out.println(section.getTitle() + " " + section.getCourseName() + " " + section.isEnrolled());
-
-				if (section.isEnrolled())
-					section_enrolled.add(section);
-				else
-					section_enrolled.remove(section);
-
-				System.out.println("In the section_enrolled: ");
-
-				for (int i = 0; i < section_enrolled.size(); i++) {
-					System.out.println(section_enrolled.get(i).getTitle() + " "
-							+ section_enrolled.get(i).getCourseName() + " " + section_enrolled.get(i).isEnrolled());
-				}
-			});
-			return new SimpleObjectProperty(checkBox);
-		});
-
-		table.setItems(getEnrolSection());
-		table.setEditable(true);
-
-		// task 5 initialize
-		progressbar.setProgress(0.0);
-
-		// task 6 initialize
-		buttonSfqEnrollCourse.setDisable(true);
-
-	}
-
-	public ObservableList<Section> getEnrolSection() {
-		ObservableList<Section> sections = FXCollections.observableArrayList();
-
-		for (Section s : section_filter) {
-			sections.add(s);
-		}
-
-		return sections;
-	}
-
-	@FXML
-	void buttonselectall() {
-		if (buttonselect.getText().equals("Select All")) {
-			buttonselect.setText("De-select All");
-			checkboxAM.setSelected(true);
-			checkboxPM.setSelected(true);
-			checkboxMon.setSelected(true);
-			checkboxTue.setSelected(true);
-			checkboxWed.setSelected(true);
-			checkboxThu.setSelected(true);
-			checkboxFri.setSelected(true);
-			checkboxSat.setSelected(true);
-			checkboxCom.setSelected(true);
-			checkboxExc.setSelected(true);
-			checkboxLab.setSelected(true);
-			search();
-		} else {
-			buttonselect.setText("Select All");
-			checkboxAM.setSelected(false);
-			checkboxPM.setSelected(false);
-			checkboxMon.setSelected(false);
-			checkboxTue.setSelected(false);
-			checkboxWed.setSelected(false);
-			checkboxThu.setSelected(false);
-			checkboxFri.setSelected(false);
-			checkboxSat.setSelected(false);
-			checkboxCom.setSelected(false);
-			checkboxExc.setSelected(false);
-			checkboxLab.setSelected(false);
-			search();
-		}
-	}
-
-	// Print the course info, used in search function and filter function
-	void printTextAreaConsole(List<Course> courses) {
 		// textAreaConsole.setText("Filter");
 		for (Course c : courses) {
 
@@ -539,29 +546,50 @@ public class Controller {
 			// Record the course we have scraped
 			this.course_scraped = v;
 			this.printTextAreaConsole(course_scraped);
-
-		}
-	}
-
+			
+    	}
+    }
+    
+    private List<Label> EnrolledLabel = new Vector<Label>();
+    
 	public void timetable(List<Section> sections) {
-		AnchorPane ap = (AnchorPane) tabTimetable.getContent();
-		for (Section se : sections) {
-			Slot s = se.getSlot(0);
-			Label randomLabel = new Label(se.getCourseName());
-			double startY = (s.getStartHour()) * 20 + 40 + s.getStartMinute() * 10 / 30;
-			double startX = s.getDay() * 100;
-			randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-			randomLabel.setLayoutX(startX);
-			randomLabel.setLayoutY(startY);
-			randomLabel.setMinWidth(100.0);
-			randomLabel.setMaxWidth(100.0);
-			randomLabel.setMinHeight(60);
-			randomLabel.setMaxHeight(60);
-
-			ap.getChildren().addAll(randomLabel);
-		}
-	}
-
+    	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
+    	
+    	ap.getChildren().removeAll(EnrolledLabel);
+    	EnrolledLabel.clear();
+    	
+    	//System.out.println("Timetable");
+    	for(Section se: sections) {
+    		//random colors background generator
+	    	double r1 = Math.random();
+	    	double r2 = Math.random();
+	    	double r3 = Math.random();
+    		for(int i = 0;i < se.getNumSlots();i++){
+    			//System.out.println(se.getCourseName());
+    	    	Slot s = se.getSlot(i);
+    	    	Label randomLabel = new Label(se.getCourseCode() + "\n" + se.getTitle());
+    	    	double startY = 40 + (s.getStartHour() - 9) * 20 + s.getStartMinute()*10/30;
+    	    	double startX = (s.getDay() + 1)*100;
+    	    	double Height = (s.getEndHour() - s.getStartHour()) * 20 + (s.getEndMinute() - s.getStartMinute()) *10/30;
+    	    	double Width = 100;
+    	    	//System.out.println(s.getStartHour() + "\n" + startX + "\n" + startY + "\n" + Height);
+    	    	randomLabel.setBackground(new Background(new BackgroundFill(Color.color(r1,r2,r3), CornerRadii.EMPTY, Insets.EMPTY)));
+    	    	randomLabel.setTextFill(Color.WHITE);
+    	    	randomLabel.setOpacity(0.8);
+    	    	randomLabel.setLayoutX(startX);
+    	    	randomLabel.setLayoutY(startY);
+    	    	randomLabel.setMinWidth(Width);
+    	    	randomLabel.setMaxWidth(Width);
+    	    	randomLabel.setMinHeight(Height);
+    	    	randomLabel.setMaxHeight(Height);
+    	    
+    	    	ap.getChildren().add(randomLabel);
+    	    	EnrolledLabel.add(randomLabel);
+    			
+    		}
+    	}
+    }
+    
 	public boolean equals(String str) {
 		if (str == null)
 			return false;
