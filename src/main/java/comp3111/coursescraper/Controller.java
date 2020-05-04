@@ -539,29 +539,50 @@ public class Controller {
 			// Record the course we have scraped
 			this.course_scraped = v;
 			this.printTextAreaConsole(course_scraped);
-
-		}
-	}
-
+			
+    	}
+    }
+    
+    private List<Label> EnrolledLabel = new Vector<Label>();
+    
 	public void timetable(List<Section> sections) {
-		AnchorPane ap = (AnchorPane) tabTimetable.getContent();
-		for (Section se : sections) {
-			Slot s = se.getSlot(0);
-			Label randomLabel = new Label(se.getCourseName());
-			double startY = (s.getStartHour()) * 20 + 40 + s.getStartMinute() * 10 / 30;
-			double startX = s.getDay() * 100;
-			randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-			randomLabel.setLayoutX(startX);
-			randomLabel.setLayoutY(startY);
-			randomLabel.setMinWidth(100.0);
-			randomLabel.setMaxWidth(100.0);
-			randomLabel.setMinHeight(60);
-			randomLabel.setMaxHeight(60);
-
-			ap.getChildren().addAll(randomLabel);
-		}
-	}
-
+    	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
+    	
+    	ap.getChildren().removeAll(EnrolledLabel);
+    	EnrolledLabel.clear();
+    	
+    	//System.out.println("Timetable");
+    	for(Section se: sections) {
+    		//random colors background generator
+	    	double r1 = Math.random();
+	    	double r2 = Math.random();
+	    	double r3 = Math.random();
+    		for(int i = 0;i < se.getNumSlots();i++){
+    			//System.out.println(se.getCourseName());
+    	    	Slot s = se.getSlot(i);
+    	    	Label randomLabel = new Label(se.getCourseCode() + "\n" + se.getTitle());
+    	    	double startY = 40 + (s.getStartHour() - 9) * 20 + s.getStartMinute()*10/30;
+    	    	double startX = (s.getDay() + 1)*100;
+    	    	double Height = (s.getEndHour() - s.getStartHour()) * 20 + (s.getEndMinute() - s.getStartMinute()) *10/30;
+    	    	double Width = 100;
+    	    	//System.out.println(s.getStartHour() + "\n" + startX + "\n" + startY + "\n" + Height);
+    	    	randomLabel.setBackground(new Background(new BackgroundFill(Color.color(r1,r2,r3), CornerRadii.EMPTY, Insets.EMPTY)));
+    	    	randomLabel.setTextFill(Color.WHITE);
+    	    	randomLabel.setOpacity(0.8);
+    	    	randomLabel.setLayoutX(startX);
+    	    	randomLabel.setLayoutY(startY);
+    	    	randomLabel.setMinWidth(Width);
+    	    	randomLabel.setMaxWidth(Width);
+    	    	randomLabel.setMinHeight(Height);
+    	    	randomLabel.setMaxHeight(Height);
+    	    
+    	    	ap.getChildren().add(randomLabel);
+    	    	EnrolledLabel.add(randomLabel);
+    			
+    		}
+    	}
+    }
+    
 	public boolean equals(String str) {
 		if (str == null)
 			return false;
