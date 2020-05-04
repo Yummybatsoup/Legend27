@@ -279,7 +279,7 @@ public class Scraper {
 					if(existInstructor!=null) {
 						existInstructor.addnumofSection();
 						existInstructor.addtotalScore(Double.parseDouble(tr.getCell(3).asText().split("\\(")[0]));
-						System.out.println(existInstructor.toString());
+//						System.out.println(existInstructor.toString());
 					}
 					else {
 					InstructorSFQ instr = new InstructorSFQ();
@@ -343,7 +343,7 @@ public class Scraper {
 					if (arrivedCourseCode&& i<numofsection && !row.getCell(1).asText().replaceAll("\\s+", "").isBlank()) {
 //						System.out.println(row.getCell(3).asText());
 						score += Double.parseDouble(row.getCell(3).asText().split("\\(")[0]);
-						System.out.println(score);
+//						System.out.println(score);
 						i++;
 						continue;
 					}
