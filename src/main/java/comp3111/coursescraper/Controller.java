@@ -36,6 +36,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Vector;
+
 public class Controller {
 
     @FXML
@@ -205,6 +206,9 @@ public class Controller {
     	
     	// task 5 initialize
     	progressbar.setProgress(0.0);
+      
+      // task 6 initialize
+		  buttonSfqEnrollCourse.setDisable(true);
     }
     
     public ObservableList<Section> getEnrolSection() {
@@ -255,265 +259,290 @@ public class Controller {
     
     // Print the course info, used in search function and filter function
     void printTextAreaConsole(List<Course> courses) {
+
 		// textAreaConsole.setText("Filter");
-    	for (Course c : courses) {
-    		
-		textAreaConsole.setText(textAreaConsole.getText() + "\n");
-		
+		for (Course c : courses) {
+
+			textAreaConsole.setText(textAreaConsole.getText() + "\n");
+
 //    	for (Course c : v) {
 //    		System.out.println(c.getNumSections()+"  "+ c.getNumSlots());
 //    		if (c.getNumSlots() == 0)
 //    			continue;
-    		
-    		String newline = c.getTitle() + "\n";
-    		for (int i = 0; i < c.getNumSections(); i++) {
-    			Section s = c.getSection(i);
-    			for (int j = 0; j < s.getNumSlots(); j++) {
-    				Slot t = s.getSlot(j);
-    				newline += "Section:" + s.getTitle() + " Slot " + (j+1) + ":" + t + "\n";
-    			}
-    		}
-    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
-    	}
-    }
-    
-    // Filter all the courses scraped
-    @FXML
-    void filter() {
-    	
-    	this.course_filter = new Vector<Course>();
-    	
-		boolean all_false[] = {false, false, false, false, false, false};
+
+			String newline = c.getTitle() + "\n";
+			for (int i = 0; i < c.getNumSections(); i++) {
+				Section s = c.getSection(i);
+				for (int j = 0; j < s.getNumSlots(); j++) {
+					Slot t = s.getSlot(j);
+					newline += "Section:" + s.getTitle() + " Slot " + (j + 1) + ":" + t + "\n";
+				}
+			}
+			textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
+		}
+	}
+
+	// Filter all the courses scraped
+	@FXML
+	void filter() {
+
+		this.course_filter = new Vector<Course>();
+
+		boolean all_false[] = { false, false, false, false, false, false };
 		// textAreaConsole.setText("Filter");
-    	for (Course c : course_scraped) {
-    		if (checkboxExc.isSelected())
-    			if (c.getExclusion() != "null")
-    				continue;
-    		if (checkboxCom.isSelected())
-    			if (!c.getCC())
-    				continue;
-    		if (checkboxLab.isSelected())
-    			if (!c.gethaslabortut())
-    				continue;
-    		boolean days[] = {checkboxMon.isSelected(), checkboxTue.isSelected(), checkboxWed.isSelected(), 
-    				checkboxThu.isSelected(), checkboxFri.isSelected(), checkboxSat.isSelected()};
-    		for (int i = 0; i < c.getNumSections(); i++) {
-    			Section s = c.getSection(i);
-    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
-    				int day = s.getSlot(j).getDay();
-    				days[day] = false;
-    			}
-    		}
-    		if (!Arrays.equals(all_false, days))
-    			continue;
-    		
-    		//Check AM/PM
-    		boolean valid = false;
-    		if (checkboxAM.isSelected() && checkboxPM.isSelected()){
-    			for (int i = 0; i < c.getNumSections(); i++) {
-	    			Section s = c.getSection(i);
-	    			boolean haveAM = false;
-	    			boolean havePM = false;
-	    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
-	    				if(s.getSlot(j).getStartHour() < 12 && s.getSlot(j).getEndHour() >= 12)
-	    					valid = true;
-	    				if(s.getSlot(j).getStartHour() < 12)
-	    					haveAM = true;
-	    				if(s.getSlot(j).getStartHour() >= 12)
-	    					havePM = true;
-	    			}
-	    			if(haveAM == true && havePM == true)
-	    				valid = true;
-    			}
-    		}
-    		else if (checkboxAM.isSelected()) {
-    			for (int i = 0; i < c.getNumSections(); i++) {
-	    			Section s = c.getSection(i);
-	    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
-	    				if(s.getSlot(j).getStartHour() < 12)
-	    					valid = true;
-	    			}
-    			}
-    		}
-    		else if (checkboxPM.isSelected()) {
-    			for (int i = 0; i < c.getNumSections(); i++) {
-	    			Section s = c.getSection(i);
-	    			for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
-	    				if(s.getSlot(j).getStartHour() >= 12)
-	    					valid = true;
-	    			}
-    			}
-    		}
-    		else
-    			valid = true;
-    		
-    		if(!valid)
-    			continue;
-    		
-    		/*
-    		String newline = c.getTitle() + "\n";
-    		for (int i = 0; i < c.getNumSections(); i++) {
-    			Section s = c.getSection(i);
-    			for (int j = 0; j < s.getNumSlots(); j++) {
-    				Slot t = s.getSlot(j);
-    				newline += "Section:" + s.getTitle() + " Slot " + (j+1) + ":" + t + "\n";
-    			}
-    		}
-    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
-    		*/
-    		this.course_filter.add(c);
-    		textAreaConsole.setText("Filtered:");
-    	}
-    	
-    	section_filter = new Vector<Section>();
-    	for (Course c: course_filter) {
-    		for (int i = 0; i < c.getNumSections(); i ++) {
-    			Section section = c.getSection(i);
-    			section_filter.add(section);
-    		}
-    	}
-    	table.setItems(getEnrolSection());
-    	
-    	this.printTextAreaConsole(course_filter);
-    }
-    
-    @FXML
-    void allSubjectSearch() throws Exception {
-    	// WebClient client = new WebClient();
-    	String baseurl = textfieldURL.getText();
-    	String term = textfieldTerm.getText();
-    	String title = "";
-    	String instructor = "";
-    	String home = "ACCT";
-    	    	
-    	//Create a list containing all the subjects HtmlElement
+		for (Course c : course_scraped) {
+			if (checkboxExc.isSelected())
+				if (c.getExclusion() != "null")
+					continue;
+			if (checkboxCom.isSelected())
+				if (!c.getCC())
+					continue;
+			if (checkboxLab.isSelected())
+				if (!c.gethaslabortut())
+					continue;
+			boolean days[] = { checkboxMon.isSelected(), checkboxTue.isSelected(), checkboxWed.isSelected(),
+					checkboxThu.isSelected(), checkboxFri.isSelected(), checkboxSat.isSelected() };
+			for (int i = 0; i < c.getNumSections(); i++) {
+				Section s = c.getSection(i);
+				for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+					int day = s.getSlot(j).getDay();
+					days[day] = false;
+				}
+			}
+			if (!Arrays.equals(all_false, days))
+				continue;
+
+			// Check AM/PM
+			boolean valid = false;
+			if (checkboxAM.isSelected() && checkboxPM.isSelected()) {
+				for (int i = 0; i < c.getNumSections(); i++) {
+					Section s = c.getSection(i);
+					boolean haveAM = false;
+					boolean havePM = false;
+					for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+						if (s.getSlot(j).getStartHour() < 12 && s.getSlot(j).getEndHour() >= 12)
+							valid = true;
+						if (s.getSlot(j).getStartHour() < 12)
+							haveAM = true;
+						if (s.getSlot(j).getStartHour() >= 12)
+							havePM = true;
+					}
+					if (haveAM == true && havePM == true)
+						valid = true;
+				}
+			} else if (checkboxAM.isSelected()) {
+				for (int i = 0; i < c.getNumSections(); i++) {
+					Section s = c.getSection(i);
+					for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+						if (s.getSlot(j).getStartHour() < 12)
+							valid = true;
+					}
+				}
+			} else if (checkboxPM.isSelected()) {
+				for (int i = 0; i < c.getNumSections(); i++) {
+					Section s = c.getSection(i);
+					for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
+						if (s.getSlot(j).getStartHour() >= 12)
+							valid = true;
+					}
+				}
+			} else
+				valid = true;
+
+			if (!valid)
+				continue;
+
+			/*
+			 * String newline = c.getTitle() + "\n"; for (int i = 0; i < c.getNumSections();
+			 * i++) { Section s = c.getSection(i); for (int j = 0; j < s.getNumSlots(); j++)
+			 * { Slot t = s.getSlot(j); newline += "Section:" + s.getTitle() + " Slot " +
+			 * (j+1) + ":" + t + "\n"; } } textAreaConsole.setText(textAreaConsole.getText()
+			 * + "\n" + newline);
+			 */
+			this.course_filter.add(c);
+			textAreaConsole.setText("Filtered:");
+		}
+
+		section_filter = new Vector<Section>();
+		for (Course c : course_filter) {
+			for (int i = 0; i < c.getNumSections(); i++) {
+				Section section = c.getSection(i);
+				section_filter.add(section);
+			}
+		}
+		table.setItems(getEnrolSection());
+
+		this.printTextAreaConsole(course_filter);
+	}
+
+	@FXML
+	void allSubjectSearch() throws Exception {
+		// WebClient client = new WebClient();
+		String baseurl = textfieldURL.getText();
+		String term = textfieldTerm.getText();
+		String title = "";
+		String instructor = "";
+		String home = "ACCT";
+
+		// Create a list containing all the subjects HtmlElement
 		List<String> subjects = scraper.searchSubject(baseurl, term, home);
-		
+
 		ALL_SUBJECT_COUNT = subjects.size();
-		
+
 		System.out.println(ALL_SUBJECT_COUNT);
-		
+
 		class bg_Thread implements Runnable {
-			
+
 			double subject_scraped = 0;
 			double progress = 0;
-			
+
 			@Override
 			public void run() {
-				for (String sub:(List<String>) subjects) {
+				for (String sub : (List<String>) subjects) {
 					List<Course> courses = scraper.scrape(baseurl, term, sub);
 					System.out.println(sub);
-					
+
 					textAreaConsole.setText(textAreaConsole.getText() + sub + " is done \n");
-					
+
 					TOTAL_NUMBER_OF_COURSES += courses.size();
 					subject_scraped += 1;
-					
+
 					progress = subject_scraped / ALL_SUBJECT_COUNT;
-					
+
 					progressbar.setProgress(progress);
 					System.out.println(progressbar.getProgress());
 				}
 			}
 		}
-		
+
 		Thread th = new Thread(new bg_Thread());
 		th.start();
-		
+
 		// progressbar.progressProperty().bind(progress);
 		/*
-		for (String sub:(List<String>)subjects) {
-			List<Course> courses = scraper.scrape(baseurl, term, sub);
-			System.out.println(sub);
-			
-			textAreaConsole.setText(textAreaConsole.getText() + sub + " is done \n");
-			
-			TOTAL_NUMBER_OF_COURSES += courses.size();
-			subject_scraped += 1;
-			
-			progress = subject_scraped / ALL_SUBJECT_COUNT;
-			
-			// progressbar.setProgress(progress);
-			System.out.println(progressbar.getProgress());
+		 * for (String sub:(List<String>)subjects) { List<Course> courses =
+		 * scraper.scrape(baseurl, term, sub); System.out.println(sub);
+		 * 
+		 * textAreaConsole.setText(textAreaConsole.getText() + sub + " is done \n");
+		 * 
+		 * TOTAL_NUMBER_OF_COURSES += courses.size(); subject_scraped += 1;
+		 * 
+		 * progress = subject_scraped / ALL_SUBJECT_COUNT;
+		 * 
+		 * // progressbar.setProgress(progress);
+		 * System.out.println(progressbar.getProgress()); }
+		 */
+
+	}
+
+	@FXML
+	void findInstructorSfq() {
+//   	buttonInstructorSfq.setDisable(true);
+		buttonSfqEnrollCourse.setDisable(false);
+		String url = textfieldSfqUrl.getText();
+		List<InstructorSFQ> result = scraper.findInstructorSFQ(url);
+		if (result == null) {
+			textAreaConsole.setText(ErrorHandling.getErrorMessage());
+		} else {
+			textAreaConsole.setText("");
+			for (InstructorSFQ r : result) {
+				textAreaConsole.setText(textAreaConsole.getText()+r.toString()+"\n");
+			}
+		};
+
+	}
+
+	@FXML
+	void findSfqEnrollCourse() {
+
+		String url = textfieldSfqUrl.getText();
+		List<String> enrolled_code = new ArrayList<String>();
+		
+		for (Section section : section_enrolled) {
+			enrolled_code.add(section.getCourseCode());
 		}
-		*/
-    	
-    }
+		List<String> Distinct_enrolled_code = enrolled_code.stream().sorted().distinct().collect(Collectors.toList());
+		/*
+		 * for (String code : Distinct_enrolled_code) { System.out.println(code); }
+		 */
 
-    @FXML
-    void findInstructorSfq() {
-    	buttonInstructorSfq.setDisable(true);
-    }
+		List<String> result = scraper.findCourseSFQ(url, Distinct_enrolled_code);
+		if (result == null) {
+			textAreaConsole.setText(ErrorHandling.getErrorMessage());
+		} else {
+			textAreaConsole.setText("");
+			for (String r : result) {
+				textAreaConsole.setText(textAreaConsole.getText()+r+"\n");
+			}
+		};
+	}
 
-    @FXML
-    void findSfqEnrollCourse() {
+	@FXML
+	void search() {
 
-    }
-
-    @FXML
-    void search() {
-
-    	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-    	if (v ==null) 
-    		textAreaConsole.setText(ErrorHandling.getErrorMessage());
-    	else {
-	   		int TotalNumOfCourses =0;
-	    	int TotalNumOfSlots =0;
-	    	LocalTime time =  LocalTime.of(15, 10, 00, 0000);
-	    	ArrayList<String> InstructorArr = new ArrayList<String>();
-	    	ArrayList<String> UnavInstructorArr = new ArrayList<String>();
-	    	for (Course c : v) {
-	    		TotalNumOfSlots += c.getNumSlots();
-	    		if (c.getNumSlots() != 0) {
+		List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), textfieldSubject.getText());
+		if (v == null)
+			textAreaConsole.setText(ErrorHandling.getErrorMessage());
+		else {
+			int TotalNumOfCourses = 0;
+			int TotalNumOfSlots = 0;
+			LocalTime time = LocalTime.of(15, 10, 00, 0000);
+			ArrayList<String> InstructorArr = new ArrayList<String>();
+			ArrayList<String> UnavInstructorArr = new ArrayList<String>();
+			for (Course c : v) {
+				TotalNumOfSlots += c.getNumSlots();
+				if (c.getNumSlots() != 0) {
 //    				System.out.println(c.getNumSlots());
-	    			TotalNumOfCourses++;
-	    		}
-	    		
-	    		for (int i = 0; i < c.getNumSections(); i++) {
-	    			Section s = c.getSection(i);
-	    			for (int j = 0; j < s.getNumSlots(); j++) {
-					Slot t = s.getSlot(j);
-					String instr = t.getInstructor();
-					if (!instr.isEmpty()){
-						String[] insplit = instr.split("\\r?\\n");
-						for (int k =0; k<insplit.length ; ++k) {
+					TotalNumOfCourses++;
+				}
+
+				for (int i = 0; i < c.getNumSections(); i++) {
+					Section s = c.getSection(i);
+					for (int j = 0; j < s.getNumSlots(); j++) {
+						Slot t = s.getSlot(j);
+						String instr = t.getInstructor();
+						if (!instr.isEmpty()) {
+							String[] insplit = instr.split("\\r?\\n");
+							for (int k = 0; k < insplit.length; ++k) {
 //							System.out.print(j+ insplit[j]+" ");
-							InstructorArr.add(insplit[k].trim());
-							if((t.getDay() == 3) && (t.getStart().isBefore(time)) && (t.getEnd().isAfter(time)))
-								UnavInstructorArr.add(insplit[k]);
+								InstructorArr.add(insplit[k].trim());
+								if ((t.getDay() == 3) && (t.getStart().isBefore(time)) && (t.getEnd().isAfter(time)))
+									UnavInstructorArr.add(insplit[k]);
 							}
 //						System.out.println();
 						}
-	    			}
-	    		}
-	    	}
-    	
-	    	//Make array sorted and  distinct
-	     	List<String> DistinctInstructorArr = InstructorArr.stream().sorted().distinct().collect(Collectors.toList());
-	     	List<String> DistinctUnavInstructorArr = UnavInstructorArr.stream().sorted().distinct().collect(Collectors.toList());
-	     
-	     	//Remove unavailable
-	     	DistinctInstructorArr.removeAll(DistinctUnavInstructorArr);
-	     	//Remove TBA
-	     	DistinctInstructorArr.remove("TBA");
-	
-	    	//TextAreaConsole controller
-	    	textAreaConsole.setText("Total Number of courses: " + TotalNumOfCourses ); 		
-			textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of slots: " + TotalNumOfSlots );
-	
-			textAreaConsole.setText(textAreaConsole.getText() + "\n" + 
-					"Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm :");
+					}
+				}
+			}
+
+			// Make array sorted and distinct
+			List<String> DistinctInstructorArr = InstructorArr.stream().sorted().distinct()
+					.collect(Collectors.toList());
+			List<String> DistinctUnavInstructorArr = UnavInstructorArr.stream().sorted().distinct()
+					.collect(Collectors.toList());
+
+			// Remove unavailable
+			DistinctInstructorArr.removeAll(DistinctUnavInstructorArr);
+			// Remove TBA
+			DistinctInstructorArr.remove("TBA");
+
+			// TextAreaConsole controller
+			textAreaConsole.setText("Total Number of courses: " + TotalNumOfCourses);
+			textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of slots: " + TotalNumOfSlots);
+
+			textAreaConsole.setText(textAreaConsole.getText() + "\n"
+					+ "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm :");
 			for (String i : DistinctInstructorArr) {
 				textAreaConsole.setText(textAreaConsole.getText() + "\n" + i);
 			}
-			
+
 			// textAreaConsole.setText(textAreaConsole.getText() + "\t Before all_false");
-			
+
 			// reset the list
 			section_enrolled.clear();
 			// reset the table
 			table.setItems(getEnrolSection());
-			
+
 			// Record the course we have scraped
 			this.course_scraped = v;
 			this.printTextAreaConsole(course_scraped);
@@ -562,14 +591,12 @@ public class Controller {
     }
     
 	public boolean equals(String str) {
-		if (str == null) 
+		if (str == null)
 			return false;
 		if (this.equals(str))
-	        return true;
-		else 
-	        return false;
-    }
-    
-    
+			return true;
+		else
+			return false;
+	}
 
 }
