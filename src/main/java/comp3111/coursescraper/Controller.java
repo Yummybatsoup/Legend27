@@ -404,6 +404,9 @@ public class Controller {
 
 	@FXML
 	void allSubjectSearch() throws Exception {
+		//Task6  Find SFQ with my enrolled courses enabled
+		buttonSfqEnrollCourse.setDisable(false);
+		
 		// WebClient client = new WebClient();
 		
 		String baseurl = textfieldURL.getText();
@@ -498,8 +501,6 @@ public class Controller {
 
 	@FXML
 	void findInstructorSfq() {
-//   	buttonInstructorSfq.setDisable(true);
-		buttonSfqEnrollCourse.setDisable(false);
 		String url = textfieldSfqUrl.getText();
 		List<InstructorSFQ> result = scraper.findInstructorSFQ(url);
 		if (result == null) {
@@ -542,7 +543,9 @@ public class Controller {
 
 	@FXML
 	void search() {
-
+		//Task 6  Find SFQ with my enrolled courses enabled
+		buttonSfqEnrollCourse.setDisable(false);
+		
 		List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), textfieldSubject.getText());
 		if (v == null)
 			textAreaConsole.setText(ErrorHandling.getErrorMessage());

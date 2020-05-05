@@ -37,21 +37,24 @@ public class Course {
 	}
 
 	/**
-	 * @return the title
+	 * return title
+	 * @return title
 	 */
 	public String getTitle() {
 		return title;
 	}
 
 	/**
-	 * @param title the title to set
+	 * set title
+	 * @param title the course title
 	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 	
 	/**
-	 * @param title the title to set
+	 * set code
+	 * @param code the course code
 	 */
 	public void setCourseCode(String code) {
 		this.code = code;
@@ -59,6 +62,7 @@ public class Course {
 
 
 	/**
+	 * return description
 	 * @return the description
 	 */
 	public String getDescription() {
@@ -66,6 +70,7 @@ public class Course {
 	}
 
 	/**
+	 * Set the description
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
@@ -73,6 +78,7 @@ public class Course {
 	}
 
 	/**
+	 * return exclusion
 	 * @return the exclusion
 	 */
 	public String getExclusion() {
@@ -106,14 +112,14 @@ public class Course {
 	}
 
 	/**
-	 * @return the numSlots
+	 * @return numSections the numSections
 	 */
 	public int getNumSections() {
 		return numSections;
 	}
 
 	/**
-	 * @param numSlots the numSlots to set
+	 * @param numSections the numSlots to set
 	 */
 	public void setNumSections(int numSections) {
 		this.numSections = numSections;
