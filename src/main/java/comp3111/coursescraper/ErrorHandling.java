@@ -12,6 +12,14 @@ public class ErrorHandling {
 	}
 	
 	/**
+	* Set the error message to Invail URL when get error404
+	*
+	*/
+	public static void OtherError(Exception s) {
+		ErrorMessage = s.toString();
+	}
+	
+	/**
 	* Return the error message
 	*
 	* @return error message
