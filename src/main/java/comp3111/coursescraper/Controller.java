@@ -164,8 +164,9 @@ public class Controller {
 	
 	boolean search_all_subject_clicked = false;
 
-	// Control the table/anything need to be initialized when the controller is
-	// constructed, used in task 3. task 4 should also need to modify this
+	/**
+	 * Control anything needed to be initialized when the controller is constructed.
+	 */
 	@FXML
 	public void initialize() {
 
@@ -218,9 +219,15 @@ public class Controller {
 		buttonSfqEnrollCourse.setDisable(true);
 	}
 
+	/**
+	 *  Create a list of sections that we want to display in the table
+	 * @param filtered If yes: we construct our list according to the filter result. If no: we construct the list from the list of scraped course
+	 * @return a list of sections to be displayed in the table
+	 */
 	public ObservableList<Section> getEnrolSection(boolean filtered) {
 		ObservableList<Section> sections = FXCollections.observableArrayList();
 		
+		System.out.println("getEnrolSection called");
 		
 		if (filtered) {
 			for (Section s : section_filter) {
@@ -233,15 +240,17 @@ public class Controller {
 					boolean enrolled = false;
 					
 					// check if the section is already enrolled
-					for (int j = 0; j < section_enrolled.size(); i ++) {
+					for (int j = 0; j < section_enrolled.size(); j ++) {
 						
 						if (course.getSection(i).getTitle().equals(section_enrolled.get(j).getTitle())
 								&& course.getSection(i).getCourseName().equals(section_enrolled.get(j).getCourseName())) {
 							sections.add(section_enrolled.get(j));
+							System.out.println(section_enrolled.get(j).getTitle() + " " + section_enrolled.get(j).getCourseName());
 							enrolled = true;
 							break;
 						}
 					}
+					
 					if (!enrolled)
 						sections.add(course.getSection(i));
 				}
@@ -402,6 +411,11 @@ public class Controller {
 		this.printTextAreaConsole(course_filter);
 	}
 
+	/**
+	 * Clicked once: Display the Total Number of Categories: ALL_SUBJECT_COUNT
+	 * Clicked twice: scrape all the course according to the list of subjects, reset list of scraped course and list of filtered course
+	 * @throws Exception
+	 */
 	@FXML
 	void allSubjectSearch() throws Exception {
 		//Task6  Find SFQ with my enrolled courses enabled
@@ -426,7 +440,9 @@ public class Controller {
 
 		System.out.println(ALL_SUBJECT_COUNT);
 		
-		course_scraped = new Vector<Course>();
+		course_scraped.clear();
+		course_filter.clear();
+		section_filter.clear();
 		
 		/*
 		double subject_scraped = 0;
@@ -485,10 +501,12 @@ public class Controller {
 				textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Courses fetched: " + TOTAL_NUMBER_OF_COURSES);
 				search_all_subject_clicked = false;
 				
-				
-				table.setItems(getEnrolSection(false));
 				System.out.println(section_filter.size());
 				System.out.println(course_scraped.size());
+				
+				table.setItems(getEnrolSection(false));
+				
+				System.out.println("All subject search end");
 			}
 		}
 		
