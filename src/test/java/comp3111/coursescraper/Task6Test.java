@@ -55,7 +55,26 @@ public class Task6Test extends ApplicationTest {
 		
 		assertTrue(buttonSfqEnrollCourse.isDisable() == false);
 	}
-
+	
+	
+	@Test
+	public void buttonInstructorSfqWithErrorUrl() {
+		clickOn("#tabSfq");
+		clickOn("#buttonInstructorSfq");
+		TextArea console=(TextArea) s.lookup("#textAreaConsole");
+		assertTrue(console.getText().equals("java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"));
+	}
+	
+	@Test
+	public void buttonInstructorSfq(){
+		clickOn("#tabSfq");
+		TextField url=(TextField) s.lookup("#textfieldSfqUrl");
+		url.setText("http://thliuab.student.ust.hk/comp3111");
+		clickOn("#buttonInstructorSfq");
+		TextArea console=(TextArea) s.lookup("#textAreaConsole");
+		assertTrue(console.getText().isBlank()==false);
+	}
+	
 	/*
 	@Test
 	public void testSfqEnrollCourse() throws Exception {
