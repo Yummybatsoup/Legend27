@@ -18,7 +18,7 @@ import java.util.Vector;
 
 import org.apache.http.client.HttpResponseException;
 
-/**
+/*
  * WebScraper provide a sample code that scrape web content. After it is
  * constructed, you can call the method scrape with a keyword, the client will
  * go to the default url and parse the page by looking at the HTML DOM. <br>
@@ -40,21 +40,21 @@ import org.apache.http.client.HttpResponseException;
  * {@code
  * <div class="course">
  * <div class="courseanchor" style=
-"position: relative; float: left; visibility: hidden; top: -164px;"><a name=
-"COMP1001">&nbsp;</a></div>
+ *"position: relative; float: left; visibility: hidden; top: -164px;"><a name=
+ *"COMP1001">&nbsp;</a></div>
  * <div class="courseinfo">
  * <div class="popup attrword"><span class=
-"crseattrword">[3Y10]</span><div class=
-"popupdetail">CC for 3Y 2010 &amp; 2011 cohorts</div></div><div class=
-"popup attrword"><span class="crseattrword">[3Y12]</span><div class=
-"popupdetail">CC for 3Y 2012 cohort</div></div><div class=
-"popup attrword"><span class="crseattrword">[4Y]</span><div class=
-"popupdetail">CC for 4Y 2012 and after</div></div><div class=
-"popup attrword"><span class="crseattrword">[DELI]</span><div class=
-"popupdetail">Mode of Delivery</div></div>	
+ *"crseattrword">[3Y10]</span><div class=
+ *"popupdetail">CC for 3Y 2010 &amp; 2011 cohorts</div></div><div class=
+ *"popup attrword"><span class="crseattrword">[3Y12]</span><div class=
+ *"popupdetail">CC for 3Y 2012 cohort</div></div><div class=
+ *"popup attrword"><span class="crseattrword">[4Y]</span><div class=
+ *"popupdetail">CC for 4Y 2012 and after</div></div><div class=
+ *"popup attrword"><span class="crseattrword">[DELI]</span><div class=
+ *"popupdetail">Mode of Delivery</div></div>	
  *    <div class="courseattr popup">
  * 	    <span style=
-"font-size: 12px; color: #688; font-weight: bold;">COURSE INFO</span>
+ *"font-size: 12px; color: #688; font-weight: bold;">COURSE INFO</span>
  * 	    <div class="popupdetail">
  * 	    <table width="400">
  *         <tbody>
@@ -70,25 +70,24 @@ import org.apache.http.client.HttpResponseException;
  *   <tbody>
  *    <tr>
  *        <th width="85">Section</th><th width="190" style=
-"text-align: left">Date &amp; Time</th><th width="160" style=
-"text-align: left">Room</th><th width="190" style=
-"text-align: left">Instructor</th><th width="45">Quota</th><th width=
-"45">Enrol</th><th width="45">Avail</th><th width="45">Wait</th><th width=
-"81">Remarks</th>
+ *"text-align: left">Date &amp; Time</th><th width="160" style=
+ *"text-align: left">Room</th><th width="190" style=
+ *"text-align: left">Instructor</th><th width="45">Quota</th><th width=
+ *"45">Enrol</th><th width="45">Avail</th><th width="45">Wait</th><th width=
+ *"81">Remarks</th>
  *    </tr>
  *    <tr class="newsect secteven">
  *        <td align="center">L1 (1765)</td>
  *        <td>We 02:00PM - 03:50PM</td><td>Rm 5620, Lift 31-32 (70)</td><td><a href
-=
-"/wcq/cgi-bin/1830/instructor/LEUNG, Wai Ting">LEUNG, Wai Ting</a></td><td align
-="center">67</td><td align="center">0</td><td align="center">67</td><td align=
-"center">0</td><td align="center">&nbsp;</td></tr><tr class="newsect sectodd">
+ *=
+ *"/wcq/cgi-bin/1830/instructor/LEUNG, Wai Ting">LEUNG, Wai Ting</a></td><td align
+ *="center">67</td><td align="center">0</td><td align="center">67</td><td align=
+ *"center">0</td><td align="center">&nbsp;</td></tr><tr class="newsect sectodd">
  *        <td align="center">LA1 (1766)</td>
- *        <td>Tu 09:00AM - 10:50AM</td><td>Rm 4210, Lift 19 (67)</td><td><a href
-=
-"/wcq/cgi-bin/1830/instructor/LEUNG, Wai Ting">LEUNG, Wai Ting</a></td><td align
-="center">67</td><td align="center">0</td><td align="center">67</td><td align=
-"center">0</td><td align="center">&nbsp;</td>
+ *        <td>Tu 09:00AM - 10:50AM</td><td>Rm 4210, Lift 19 (67)</td><td><a href=
+ *"/wcq/cgi-bin/1830/instructor/LEUNG, Wai Ting">LEUNG, Wai Ting</a></td><td align
+ *="center">67</td><td align="center">0</td><td align="center">67</td><td align=
+ *"center">0</td><td align="center">&nbsp;</td>
  *    </tr>
  *   </tbody>
  *  </table>
@@ -127,6 +126,14 @@ public class Scraper {
 		client.getOptions().setJavaScriptEnabled(false);
 	}
 
+	/**
+	 * add the slot to the input section with the info in the input HtmlElement
+	 * 
+	 * @param e         HtmlElement
+	 * @param section   Section type
+	 * @param secondRow boolean
+	 * @return void
+	 */
 	private void addSlot(HtmlElement e, Section section, boolean secondRow) {
 
 		/*
@@ -165,6 +172,16 @@ public class Scraper {
 
 	}
 
+	/**
+	 * Return a list of Course class, by web scraping input website with input
+	 * (baseurl + "/" + term + "/subject/" + sub)
+	 *
+	 * @param baseurl an base URL direct to course info
+	 * @param term    term code e.g 1910
+	 * @param sub     subject codde e.g COMP
+	 * @return a list of String storing displaying String (course: XXXX0000 SFQ
+	 *         averge score: 99)
+	 */
 	public List<Course> scrape(String baseurl, String term, String sub) {
 
 		try {
@@ -257,37 +274,42 @@ public class Scraper {
 		return subs;
 	}
 
+	/**
+	 * Return a list of InsturctorSFQ class, by web scraping input website with
+	 * input url
+	 *
+	 * @param url an absolute URL giving the SFQ info
+	 * @return a list of InstructorSFQ class object
+	 */
 	// task 6 scrape Instructor SFQ
 	public List<InstructorSFQ> findInstructorSFQ(String url) {
 		try {
 
 			HtmlPage page = client.getPage(url);
 			List<InstructorSFQ> Instructors = new ArrayList<InstructorSFQ>();
-			
+
 			List<HtmlTableRow> trlist = page.getByXPath("//tr");
 			trlist.remove(0);
 			trlist.remove(0);
-			
-			
-			for( HtmlTableRow tr: trlist) {
-				if( tr.getCell(0).asText().isBlank() && tr.getCell(1).asText().isBlank()) {
-					if(tr.getCell(3).asText().split("\\(")[0].equals("-") || tr.getCell(2).asText().isBlank()){
+
+			for (HtmlTableRow tr : trlist) {
+				if (tr.getCell(0).asText().isBlank() && tr.getCell(1).asText().isBlank()) {
+					if (tr.getCell(3).asText().split("\\(")[0].equals("-") || tr.getCell(2).asText().isBlank()) {
 						continue;
 					}
-					String name =tr.getCell(2).asText();
-					InstructorSFQ existInstructor = checkexist(name,Instructors);
-					if(existInstructor!=null) {
+					String name = tr.getCell(2).asText();
+					InstructorSFQ existInstructor = checkexist(name, Instructors);
+					if (existInstructor != null) {
 						existInstructor.addnumofSection();
 						existInstructor.addtotalScore(Double.parseDouble(tr.getCell(3).asText().split("\\(")[0]));
 //						System.out.println(existInstructor.toString());
-					}
-					else {
-					InstructorSFQ instr = new InstructorSFQ();
-					instr.setname(tr.getCell(2).asText());
-					instr.addnumofSection();
-					instr.addtotalScore(Double.parseDouble(tr.getCell(3).asText().split("\\(")[0]));
+					} else {
+						InstructorSFQ instr = new InstructorSFQ();
+						instr.setname(tr.getCell(2).asText());
+						instr.addnumofSection();
+						instr.addtotalScore(Double.parseDouble(tr.getCell(3).asText().split("\\(")[0]));
 //					System.out.println(instr.toString());
-					Instructors.add(instr);
+						Instructors.add(instr);
 					}
 				}
 			}
@@ -304,17 +326,25 @@ public class Scraper {
 		}
 		return null;
 	}
-	
+
 	public InstructorSFQ checkexist(String name, List<InstructorSFQ> list) {
-		for (InstructorSFQ instr:list ) {
-			if(name.equals(instr.getname())){
+		for (InstructorSFQ instr : list) {
+			if (name.equals(instr.getname())) {
 				return instr;
 			}
 		}
 		return null;
 	}
-	
-	
+
+	/**
+	 * Return a list of InsturctorSFQ class, by web scraping input website with
+	 * input url
+	 *
+	 * @param url                 an absolute URL giving the SFQ info
+	 * @param enrolled_coursecode a list of String storing enrolled course code
+	 * @return a list of String storing displaying String (course: XXXX0000 SFQ
+	 *         averge score: 99)
+	 */
 	// task 6 scrape Course SFQ
 	public List<String> findCourseSFQ(String url, List<String> enrolled_coursecode) {
 		try {
@@ -324,7 +354,7 @@ public class Scraper {
 			HtmlPage page = client.getPage(url);
 			List<String> CourseSFQ = new ArrayList<String>();
 			Boolean arrivedCourseCode = false;
-		
+
 			for (String code : enrolled_coursecode) {
 				int numofsection = 0;
 				int i = 0;
@@ -340,7 +370,8 @@ public class Scraper {
 					}
 
 					// info with section
-					if (arrivedCourseCode&& i<numofsection && !row.getCell(1).asText().replaceAll("\\s+", "").isBlank()) {
+					if (arrivedCourseCode && i < numofsection
+							&& !row.getCell(1).asText().replaceAll("\\s+", "").isBlank()) {
 //						System.out.println(row.getCell(3).asText());
 						score += Double.parseDouble(row.getCell(3).asText().split("\\(")[0]);
 //						System.out.println(score);
@@ -348,7 +379,7 @@ public class Scraper {
 						continue;
 					}
 				}
-				CourseSFQ.add("course: "+code+" SFQ averge score: "+ score/numofsection);
+				CourseSFQ.add("course: " + code + " SFQ averge score: " + score / numofsection);
 			}
 
 			return CourseSFQ;
