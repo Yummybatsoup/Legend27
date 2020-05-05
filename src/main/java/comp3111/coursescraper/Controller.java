@@ -28,6 +28,8 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -159,8 +161,10 @@ public class Controller {
 
 	int TOTAL_NUMBER_OF_COURSES = 0; // for task 5
 	int ALL_SUBJECT_COUNT = 0; // for task 5
+	
+	boolean search_all_subject_clicked = false;
 
-	// Control the table/anything need to be initialized when the controlled is
+	// Control the table/anything need to be initialized when the controller is
 	// constructed, used in task 3. task 4 should also need to modify this
 	@FXML
 	public void initialize() {
@@ -191,19 +195,20 @@ public class Controller {
 				// task4
 				timetable(section_enrolled);
 
-				/*
-				 * System.out.println("In the section_enrolled: ");
-				 * 
-				 * for (int i = 0; i < section_enrolled.size(); i++) {
-				 * System.out.println(section_enrolled.get(i).getTitle() + " " +
-				 * section_enrolled.get(i).getCourseName() + " " +
-				 * section_enrolled.get(i).isEnrolled()); }
-				 */
+				textAreaConsole.setText("The following sections are enrolled: " + "\n");
+				
+				for (int i = 0; i < section_enrolled.size(); i++) {
+					textAreaConsole.setText(textAreaConsole.getText() + "\n" + 
+							section_enrolled.get(i).getCourseCode() + " " + 
+							section_enrolled.get(i).getCourseName() + " " + 
+							section_enrolled.get(i).getTitle()
+							);
+				}
 			});
 			return new SimpleObjectProperty(checkBox);
 		});
 
-		table.setItems(getEnrolSection());
+		table.setItems(getEnrolSection(true));
 		table.setEditable(true);
 
 		// task 5 initialize
@@ -213,13 +218,36 @@ public class Controller {
 		buttonSfqEnrollCourse.setDisable(true);
 	}
 
-	public ObservableList<Section> getEnrolSection() {
+	public ObservableList<Section> getEnrolSection(boolean filtered) {
 		ObservableList<Section> sections = FXCollections.observableArrayList();
-
-		for (Section s : section_filter) {
-			sections.add(s);
+		
+		
+		if (filtered) {
+			for (Section s : section_filter) {
+				sections.add(s);
+			}
+		}else {
+			for (Course course : course_scraped) {
+				for (int i = 0; i < course.getNumSections(); i++) {
+					
+					boolean enrolled = false;
+					
+					// check if the section is already enrolled
+					for (int j = 0; j < section_enrolled.size(); i ++) {
+						
+						if (course.getSection(i).getTitle().equals(section_enrolled.get(j).getTitle())
+								&& course.getSection(i).getCourseName().equals(section_enrolled.get(j).getCourseName())) {
+							sections.add(section_enrolled.get(j));
+							enrolled = true;
+							break;
+						}
+					}
+					if (!enrolled)
+						sections.add(course.getSection(i));
+				}
+			}
+			
 		}
-
 		return sections;
 	}
 
@@ -369,7 +397,7 @@ public class Controller {
 				section_filter.add(section);
 			}
 		}
-		table.setItems(getEnrolSection());
+		table.setItems(getEnrolSection(true));
 
 		this.printTextAreaConsole(course_filter);
 	}
@@ -377,19 +405,54 @@ public class Controller {
 	@FXML
 	void allSubjectSearch() throws Exception {
 		// WebClient client = new WebClient();
+		
 		String baseurl = textfieldURL.getText();
 		String term = textfieldTerm.getText();
-		String title = "";
-		String instructor = "";
 		String home = "ACCT";
 
 		// Create a list containing all the subjects HtmlElement
 		List<String> subjects = scraper.searchSubject(baseurl, term, home);
 
 		ALL_SUBJECT_COUNT = subjects.size();
+		
+		if (search_all_subject_clicked == false) {
+			search_all_subject_clicked = true;
+			textAreaConsole.setText("Total Number of Categories/Code Prefix: " + ALL_SUBJECT_COUNT);
+			return;
+		}
 
 		System.out.println(ALL_SUBJECT_COUNT);
+		
+		course_scraped = new Vector<Course>();
+		
+		/*
+		double subject_scraped = 0;
+		DoubleProperty progress = new SimpleDoubleProperty();
+		progress.set(0);
+		progressbar.progressProperty().bind(progress);
+		
+		for (String sub : (List<String>) subjects) {
+			List<Course> courses = scraper.scrape(baseurl, term, sub);
+			System.out.println(sub);
+			
+			for (int i = 0; i < courses.size(); i ++) {
+				course_scraped.add(courses.get(i));
+			}
 
+			textAreaConsole.setText(textAreaConsole.getText() + sub + " is done \n");
+
+			TOTAL_NUMBER_OF_COURSES += courses.size();
+			subject_scraped += 1;
+
+			progress.set(subject_scraped / ALL_SUBJECT_COUNT);
+			Thread.sleep(100);
+
+			//progressbar.setProgress(progress);
+			System.out.println(progressbar.getProgress());
+		}
+		*/
+		
+		
 		class bg_Thread implements Runnable {
 
 			double subject_scraped = 0;
@@ -399,9 +462,13 @@ public class Controller {
 			public void run() {
 				for (String sub : (List<String>) subjects) {
 					List<Course> courses = scraper.scrape(baseurl, term, sub);
-					System.out.println(sub);
+					// System.out.println(sub);
+					
+					for (int i = 0; i < courses.size(); i ++) {
+						course_scraped.add(courses.get(i));
+					}
 
-					textAreaConsole.setText(textAreaConsole.getText() + sub + " is done \n");
+					System.out.println(sub + " is done.");
 
 					TOTAL_NUMBER_OF_COURSES += courses.size();
 					subject_scraped += 1;
@@ -409,28 +476,23 @@ public class Controller {
 					progress = subject_scraped / ALL_SUBJECT_COUNT;
 
 					progressbar.setProgress(progress);
-					System.out.println(progressbar.getProgress());
+					// System.out.println(progressbar.getProgress());
 				}
+				
+				textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Courses fetched: " + TOTAL_NUMBER_OF_COURSES);
+				search_all_subject_clicked = false;
+				
+				
+				table.setItems(getEnrolSection(false));
+				System.out.println(section_filter.size());
+				System.out.println(course_scraped.size());
 			}
 		}
+		
+		
 
 		Thread th = new Thread(new bg_Thread());
 		th.start();
-
-		// progressbar.progressProperty().bind(progress);
-		/*
-		 * for (String sub:(List<String>)subjects) { List<Course> courses =
-		 * scraper.scrape(baseurl, term, sub); System.out.println(sub);
-		 * 
-		 * textAreaConsole.setText(textAreaConsole.getText() + sub + " is done \n");
-		 * 
-		 * TOTAL_NUMBER_OF_COURSES += courses.size(); subject_scraped += 1;
-		 * 
-		 * progress = subject_scraped / ALL_SUBJECT_COUNT;
-		 * 
-		 * // progressbar.setProgress(progress);
-		 * System.out.println(progressbar.getProgress()); }
-		 */
 
 	}
 
@@ -539,15 +601,11 @@ public class Controller {
 
 			// textAreaConsole.setText(textAreaConsole.getText() + "\t Before all_false");
 
-			// reset the list
-			section_enrolled.clear();
-			// reset the table
-			table.setItems(getEnrolSection());
-
 			// Record the course we have scraped
 			this.course_scraped = v;
 			this.printTextAreaConsole(course_scraped);
-
+			
+			table.setItems(getEnrolSection(false));
 		}
 	}
 
