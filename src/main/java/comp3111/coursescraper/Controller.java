@@ -405,6 +405,27 @@ public class Controller {
 		table.setItems(getEnrolSection(true));
 
 		this.printTextAreaConsole(course_filter, true);
+		
+		//test for sth should appear in console
+		boolean testexist = false;
+		//test for sth should not appear in console
+		boolean testnotexist = true;
+		
+		String lines[] = textAreaConsole.getText().split("\\r?\\n");
+		for(int i = 0;i < lines.length;i++)
+			if(lines[i].equals("COMP 4651 - Cloud Computing and Big Data Systems (3 units)")) {
+				for(int k = i;k<lines.length;k++) {
+					if(lines[k].contains("LA2"))
+						testexist = true;
+					if(lines[k].contains("L1"))
+						testnotexist = false;
+					else if(lines[k].trim().isEmpty())
+						break;
+				}
+				break;
+			}
+		if (testexist && testnotexist)
+			System.out.println("good.");
 	}
 
 	/**
