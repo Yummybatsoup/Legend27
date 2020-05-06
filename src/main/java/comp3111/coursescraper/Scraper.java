@@ -232,17 +232,6 @@ public class Scraper {
 					s.setCourse(c);
 					c.addSection(s);
 				}
-
-				int numsec = c.getNumSections();
-				if (numsec != 0) {
-					String sectitle = c.getSection(numsec - 1).getTitle();
-					if (sectitle.contains("LA") || sectitle.contains("T"))
-						c.sethaslabortut(true);
-					else
-						c.sethaslabortut(false);
-				} else
-					c.sethaslabortut(false);
-
 				result.add(c);
 			}
 			client.close();

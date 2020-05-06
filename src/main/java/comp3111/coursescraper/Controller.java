@@ -275,7 +275,7 @@ public class Controller {
 			checkboxCom.setSelected(true);
 			checkboxExc.setSelected(true);
 			checkboxLab.setSelected(true);
-			search();
+			filter();
 		} else {
 			buttonselect.setText("Select All");
 			checkboxAM.setSelected(false);
@@ -289,15 +289,18 @@ public class Controller {
 			checkboxCom.setSelected(false);
 			checkboxExc.setSelected(false);
 			checkboxLab.setSelected(false);
-			search();
+			filter();
 		}
 	}
 
 	// Print the course info, used in search function and filter function
-	void printTextAreaConsole(List<Course> courses) {
+	void printTextAreaConsole(List<Course> courses, boolean Skip0SectionCourse) {
 
 		// textAreaConsole.setText("Filter");
 		for (Course c : courses) {
+			if(Skip0SectionCourse)
+				if(c.getNumSections() == 0)
+					continue;
 
 			textAreaConsole.setText(textAreaConsole.getText() + "\n");
 
@@ -323,7 +326,7 @@ public class Controller {
 	void filter() {
 
 		this.course_filter = new Vector<Course>();
-
+		
 		boolean all_false[] = { false, false, false, false, false, false };
 		// textAreaConsole.setText("Filter");
 		for (Course c : course_scraped) {
@@ -336,23 +339,24 @@ public class Controller {
 			if (checkboxLab.isSelected())
 				if (!c.gethaslabortut())
 					continue;
-			boolean days[] = { checkboxMon.isSelected(), checkboxTue.isSelected(), checkboxWed.isSelected(),
-					checkboxThu.isSelected(), checkboxFri.isSelected(), checkboxSat.isSelected() };
+			
+			Course FilterC = new Course(c);
 			for (int i = 0; i < c.getNumSections(); i++) {
 				Section s = c.getSection(i);
+				
+				//Check days
+				boolean days[] = { checkboxMon.isSelected(), checkboxTue.isSelected(), checkboxWed.isSelected(),
+						checkboxThu.isSelected(), checkboxFri.isSelected(), checkboxSat.isSelected() };
 				for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
 					int day = s.getSlot(j).getDay();
 					days[day] = false;
 				}
-			}
-			if (!Arrays.equals(all_false, days))
-				continue;
-
-			// Check AM/PM
-			boolean valid = false;
-			if (checkboxAM.isSelected() && checkboxPM.isSelected()) {
-				for (int i = 0; i < c.getNumSections(); i++) {
-					Section s = c.getSection(i);
+				if (!Arrays.equals(all_false, days))
+					continue;
+				
+				//Check AM/PM
+				boolean valid = false; //used to check AM/PM filter, if criteria pass, it will turn true
+				if (checkboxAM.isSelected() && checkboxPM.isSelected()) {
 					boolean haveAM = false;
 					boolean havePM = false;
 					for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
@@ -366,36 +370,28 @@ public class Controller {
 					if (haveAM == true && havePM == true)
 						valid = true;
 				}
-			} else if (checkboxAM.isSelected()) {
-				for (int i = 0; i < c.getNumSections(); i++) {
-					Section s = c.getSection(i);
+				else if (checkboxAM.isSelected()) {
 					for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
 						if (s.getSlot(j).getStartHour() < 12)
 							valid = true;
 					}
 				}
-			} else if (checkboxPM.isSelected()) {
-				for (int i = 0; i < c.getNumSections(); i++) {
-					Section s = c.getSection(i);
+				else if (checkboxPM.isSelected()) {
 					for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
-						if (s.getSlot(j).getStartHour() >= 12)
+						if (s.getSlot(j).getEndHour() >= 12)
 							valid = true;
 					}
 				}
-			} else
-				valid = true;
-
-			if (!valid)
-				continue;
-
-			/*
-			 * String newline = c.getTitle() + "\n"; for (int i = 0; i < c.getNumSections();
-			 * i++) { Section s = c.getSection(i); for (int j = 0; j < s.getNumSlots(); j++)
-			 * { Slot t = s.getSlot(j); newline += "Section:" + s.getTitle() + " Slot " +
-			 * (j+1) + ":" + t + "\n"; } } textAreaConsole.setText(textAreaConsole.getText()
-			 * + "\n" + newline);
-			 */
-			this.course_filter.add(c);
+				else
+					valid = true;
+				
+				if (!valid)
+					continue;
+				
+				FilterC.addSection(s);
+			}
+			
+			this.course_filter.add(FilterC);
 			textAreaConsole.setText("Filtered:");
 		}
 
@@ -408,7 +404,7 @@ public class Controller {
 		}
 		table.setItems(getEnrolSection(true));
 
-		this.printTextAreaConsole(course_filter);
+		this.printTextAreaConsole(course_filter, true);
 	}
 
 	/**
@@ -624,19 +620,22 @@ public class Controller {
 
 			// Record the course we have scraped
 			this.course_scraped = v;
-			this.printTextAreaConsole(course_scraped);
+			this.printTextAreaConsole(course_scraped, false);
 			
 			table.setItems(getEnrolSection(false));
 		}
 	}
 
 	private List<Label> EnrolledLabel = new Vector<Label>();
+	private List<Label> EnrolledLabelBack = new Vector<Label>();
 
 	public void timetable(List<Section> sections) {
 		AnchorPane ap = (AnchorPane) tabTimetable.getContent();
 
 		ap.getChildren().removeAll(EnrolledLabel);
+		ap.getChildren().removeAll(EnrolledLabelBack);
 		EnrolledLabel.clear();
+		EnrolledLabelBack.clear();
 
 		// System.out.println("Timetable");
 		for (Section se : sections) {
@@ -644,9 +643,16 @@ public class Controller {
 			double r1 = Math.random();
 			double r2 = Math.random();
 			double r3 = Math.random();
+			if(r1 < 0.5)
+				r1 = 0.5 + r1;
+			if(r2 < 0.5)
+				r2 = 0.5 + r2;
+			if(r3 < 0.5)
+				r3 = 0.5 + r3;
 			for (int i = 0; i < se.getNumSlots(); i++) {
 				// System.out.println(se.getCourseName());
 				Slot s = se.getSlot(i);
+				Label randomLabelBack = new Label();
 				Label randomLabel = new Label(se.getCourseCode() + "\n" + se.getTitle());
 				double startY = 40 + (s.getStartHour() - 9) * 20 + s.getStartMinute() * 10 / 30;
 				double startX = (s.getDay() + 1) * 100;
@@ -655,22 +661,32 @@ public class Controller {
 				double Width = 100;
 				// System.out.println(s.getStartHour() + "\n" + startX + "\n" + startY + "\n" +
 				// Height);
-				randomLabel.setBackground(
+				randomLabelBack.setBackground(
 						new Background(new BackgroundFill(Color.color(r1, r2, r3), CornerRadii.EMPTY, Insets.EMPTY)));
-				randomLabel.setTextFill(Color.WHITE);
-				randomLabel.setOpacity(0.8);
+				randomLabelBack.setOpacity(0.4);
+				randomLabelBack.setLayoutX(startX);
+				randomLabelBack.setLayoutY(startY);
+				randomLabelBack.setMinWidth(Width);
+				randomLabelBack.setMaxWidth(Width);
+				randomLabelBack.setMinHeight(Height);
+				randomLabelBack.setMaxHeight(Height);
+				
+				randomLabel.setTextFill(Color.BLACK);
+				randomLabel.setOpacity(0.5);
 				randomLabel.setLayoutX(startX);
 				randomLabel.setLayoutY(startY);
 				randomLabel.setMinWidth(Width);
 				randomLabel.setMaxWidth(Width);
-				randomLabel.setMinHeight(Height);
-				randomLabel.setMaxHeight(Height);
+				randomLabel.setMinHeight(30);
+				randomLabel.setMaxHeight(30);
 
-				ap.getChildren().add(randomLabel);
+				EnrolledLabelBack.add(randomLabelBack);
 				EnrolledLabel.add(randomLabel);
-
 			}
 		}
+		
+		ap.getChildren().addAll(EnrolledLabelBack);
+		ap.getChildren().addAll(EnrolledLabel);
 	}
 
 	public boolean equals(String str) {

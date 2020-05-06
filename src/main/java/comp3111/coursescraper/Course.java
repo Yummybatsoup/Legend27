@@ -14,10 +14,22 @@ public class Course {
 	private boolean hasCC;
 	private Section [] sections;
 	private int numSections;
-	private boolean haslabortut;
 	
 	public Course() {
 		code = "UST0000";
+		sections = new Section[DEFAULT_MAX_Section];
+		for (int i = 0; i < DEFAULT_MAX_Section; i++) 
+			sections[i] = null;
+		numSections = 0;
+	}
+	
+	//copy constructor with no section(used for task2)
+	public Course(Course c) {
+		this.code = c.code;
+		this.title = c.title;
+		this.description = c.description;
+		this.exclusion = c.exclusion;
+		this.hasCC = c.hasCC;
 		sections = new Section[DEFAULT_MAX_Section];
 		for (int i = 0; i < DEFAULT_MAX_Section; i++) 
 			sections[i] = null;
@@ -103,12 +115,11 @@ public class Course {
 	}
 	
 	public boolean gethaslabortut() {
-		return haslabortut;
-	}
-
-	
-	public void sethaslabortut(boolean haslabortut) {
-		this.haslabortut = haslabortut;
+		for(int i=0;i<this.numSections;i++) {
+			if(this.sections[i].getTitle().contains("LA") || this.sections[i].getTitle().contains("T"))
+				return true;
+		}
+		return false;
 	}
 
 	/**
