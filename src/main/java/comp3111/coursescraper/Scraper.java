@@ -232,17 +232,6 @@ public class Scraper {
 					s.setCourse(c);
 					c.addSection(s);
 				}
-
-				int numsec = c.getNumSections();
-				if (numsec != 0) {
-					String sectitle = c.getSection(numsec - 1).getTitle();
-					if (sectitle.contains("LA") || sectitle.contains("T"))
-						c.sethaslabortut(true);
-					else
-						c.sethaslabortut(false);
-				} else
-					c.sethaslabortut(false);
-
 				result.add(c);
 			}
 			client.close();
@@ -252,6 +241,7 @@ public class Scraper {
 				ErrorHandling.NotFoundError404();
 			}
 		} catch (Exception e) {
+			ErrorHandling.OtherError(e);
 			System.out.println(e);
 		}
 		return null;
@@ -315,23 +305,27 @@ public class Scraper {
 			}
 			return Instructors;
 
-		} catch (
-
-		FailingHttpStatusCodeException httperr) {
+		} catch (FailingHttpStatusCodeException httperr) {
 			if (httperr.getStatusCode() == 404) {
 				ErrorHandling.NotFoundError404();
 			}
 		} catch (Exception e) {
+			ErrorHandling.OtherError(e);
 			System.out.println(e);
 		}
 		return null;
 	}
 
-	public InstructorSFQ checkexist(String name, List<InstructorSFQ> list) {
-		for (InstructorSFQ instr : list) {
-			if (name.equals(instr.getname())) {
-				return instr;
+	public InstructorSFQ checkexist(String name, List<InstructorSFQ> list) throws Exception {
+		try {
+			for (InstructorSFQ instr : list) {
+				if (name.equals(instr.getname())) {
+					return instr;
+				}
 			}
+		} catch (Exception e) {
+			ErrorHandling.OtherError(e);
+			System.out.println(e);
 		}
 		return null;
 	}
@@ -390,6 +384,7 @@ public class Scraper {
 				ErrorHandling.NotFoundError404();
 			}
 		} catch (Exception e) {
+			ErrorHandling.OtherError(e);
 			System.out.println(e);
 		}
 		return null;
