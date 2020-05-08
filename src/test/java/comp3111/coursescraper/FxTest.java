@@ -35,7 +35,7 @@ public class FxTest extends ApplicationTest {
    		s = scene;
 	}
 
-	
+
 	@Test
 	public void testButton() {
 		clickOn("#tabSfq");
@@ -45,3 +45,4 @@ public class FxTest extends ApplicationTest {
 		assertTrue(b.isDisabled());
 	}
 }
+
