@@ -49,9 +49,16 @@ public class Task3Test extends ApplicationTest {
 		clickOn("#tabList");
 		
 		TableView<Section> table = (TableView<Section>) s.lookup("#table");
-		ObservableList<Section> enrolled_section = table.getItems();
+		ObservableList<Section> filter_section = table.getItems();
 		
-		assert(enrolled_section.size() != 0);
+		assert(filter_section.size() != 0);
+		
+		Section s = filter_section.get(0);
+		s.setEnrolled(true);
+		
+		clickOn("#tabFilter");
+		clickOn("#checkboxMon");
+		clickOn("#tabList");
 	}
 
 
