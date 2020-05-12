@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Section.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Legend27</a> &gt; <a href="index.source.html" class="el_package">comp3111.coursescraper</a> &gt; <span class="el_source">Section.java</span></div><h1>Section.java</h1><pre class="source lang-java linenums">package comp3111.coursescraper;
+
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import java.util.List;
+import java.util.Vector;
+
+/**
+* &lt;h1&gt;Section class&lt;/h1&gt;
+* This class is to declare a section class with param, 
+* 	private String title;
+*	private String instructor;
+*	private Slot [] slots;
+*	private int numSlots;
+*	private BooleanProperty enrolled = new SimpleBooleanProperty();
+*/
+public class Section {
+	private static final int DEFAULT_MAX_SLOT = 3;
+	
+	//course attribute help to extract any info needed for the course
+	Course course;
+	
+	private String title;
+	private String instructor;
+	private Slot [] slots;
+	private int numSlots;
+	
+	// Similar to Boolean , BooleanProperty is needed to add a listener for JavaFX to know if this value is changed. (e.g. from enrolled to not enrolled)
+<span class="fc" id="L29">	private BooleanProperty enrolled = new SimpleBooleanProperty();</span>
+	
+	// Keep track of all the sections that are enrolled 
+	// public static List&lt;Section&gt; ENROLLED_SECTIONS = new Vector&lt;Section&gt;();
+	
+	@Override
+	public Section clone() {
+<span class="fc" id="L36">		Section s = new Section();</span>
+<span class="fc" id="L37">		s.course = this.course;</span>
+<span class="fc" id="L38">		s.instructor = this.instructor;</span>
+<span class="fc" id="L39">		s.title = this.title;</span>
+<span class="fc" id="L40">		s.slots = this.slots;</span>
+<span class="fc" id="L41">		s.numSlots = this.numSlots;</span>
+		
+<span class="fc" id="L43">		s.enrolled.set(this.isEnrolled());</span>
+		
+<span class="fc" id="L45">		return s;</span>
+	}
+	
+	/**
+	* default constructor  
+	* set 3 empty slot to section, numSlots =0 and course is not enroll
+	*/
+<span class="fc" id="L52">	public Section() {</span>
+<span class="fc" id="L53">		slots = new Slot[DEFAULT_MAX_SLOT];</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">		for (int i = 0; i &lt; DEFAULT_MAX_SLOT; i++) </span>
+<span class="fc" id="L55">			slots[i] = null;</span>
+<span class="fc" id="L56">		numSlots = 0;</span>
+<span class="fc" id="L57">		this.enrolled.set(false);</span>
+		
+		// added a listener function: this lambda function will be executed whenever the enrolled property is changed
+		// in this case: whenever the check box is clicked to change from enrol or un-enrol to another 
+		// lambda function: where (v, oldValue, newValue) is the parameter and the code inside {} will be execut
+
+		/*
+		this.enrolledProperty().addListener( (v, oldValue, newValue) -&gt; {
+			this.setEnrolled(newValue);
+			
+			if (this.isEnrolled())
+				Section.ENROLLED_SECTIONS.add(this);
+			else
+				Section.ENROLLED_SECTIONS.remove(this);
+			
+			for (int i = 0; i &lt; Section.ENROLLED_SECTIONS.size(); i++)
+				System.out.print(Section.ENROLLED_SECTIONS.get(i).getTitle());
+			
+			System.out.println(&quot;&quot;);
+			System.out.println(this.isEnrolled() + &quot; : Listener worked&quot;);
+			
+		});
+		*/
+<span class="fc" id="L80">	}</span>
+	
+	/**
+	* get title
+	* @return title
+	*/
+	public String getTitle() {
+<span class="fc" id="L87">		return title;</span>
+	}
+	
+	/**
+	* set title
+	* @param title String 
+	*/
+	public void setTitle(String title) {
+<span class="fc" id="L95">		this.title = title;</span>
+<span class="fc" id="L96">	}</span>
+	
+	/**
+	* add slot
+	* @param s slot
+	*/
+	public void addSlot(Slot s) {
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">		if (numSlots &gt;= DEFAULT_MAX_SLOT)</span>
+<span class="nc" id="L104">			return;</span>
+<span class="fc" id="L105">		slots[numSlots++] = s.clone();</span>
+<span class="fc" id="L106">	}</span>
+	
+	/**
+	* get slot
+	* @param i index
+	* @return slots[i] 
+	*/
+	public Slot getSlot(int i) {
+<span class="pc bpc" id="L114" title="2 of 4 branches missed.">		if (i &gt;= 0 &amp;&amp; i &lt; numSlots)</span>
+<span class="fc" id="L115">			return slots[i];</span>
+<span class="nc" id="L116">		return null;</span>
+	}
+	
+	/**
+	* get num of slots
+	* @return numSlots number of slots of a section 
+	*/
+	public int getNumSlots() {
+<span class="fc" id="L124">		return numSlots;</span>
+	}
+	
+	/**
+	* set number of slots
+	* @param numSlots number of slots to be set
+	*/
+	public void setNumSlots(int numSlots) {
+<span class="nc" id="L132">		this.numSlots = numSlots;</span>
+<span class="nc" id="L133">	}</span>
+	
+	/**
+	* get String of printing of input index 
+	* @param i index
+	* @return slots[i].toString() String value of slot 
+	*/
+	public String getSlotToString(int i) {
+<span class="nc bnc" id="L141" title="All 4 branches missed.">		if (i &gt;= 0 &amp;&amp; i &lt; numSlots)</span>
+<span class="nc" id="L142">			return slots[i].toString();</span>
+<span class="nc" id="L143">		return null;</span>
+	}
+	
+	/**
+	* set Course
+	* @param c course type
+	*/
+	public void setCourse(Course c) {
+<span class="fc" id="L151">		this.course = c;</span>
+<span class="fc" id="L152">	}</span>
+	
+	/**
+	* get section's course code
+	* @return course.getCourseCode 
+	*/
+	public String getCourseCode() {
+<span class="fc" id="L159">		return this.course.getCourseCode();</span>
+	}
+	
+	/**
+	* get section's course name
+	* @return course.getCourseName 
+	*/
+	public String getCourseName() {
+<span class="fc" id="L167">		return this.course.getTitle();</span>
+	}
+	
+	/*
+	
+	public void setCourseCode(String code) {
+		this.courseCode = code;
+	}
+	
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+	*/
+	/**
+	* set instructor name
+	* @param i String
+	*/
+	public void setInstructor(String i) {
+<span class="fc" id="L185">		this.instructor = i;</span>
+<span class="fc" id="L186">	}</span>
+	
+	/**
+	* get instructor name
+	* @return instructor name
+	*/
+	public String getInstructor() {
+<span class="fc" id="L193">		return this.instructor;</span>
+	}
+	
+	/**
+	* get boolean of course is enrolled 
+	* @return enrolled.get() boolean
+	*/
+	public boolean isEnrolled() {
+<span class="fc" id="L201">		return enrolled.get();</span>
+	}
+	
+	/**
+	* get enrolled property 
+	* @return BooleanProperty 
+	*/
+	public BooleanProperty enrolledProperty() {
+<span class="nc" id="L209">		return enrolled;</span>
+	}
+	
+	/**
+	* set enrolled property 
+	* @param enrol boolean
+	*/
+	public void setEnrolled(boolean enrol) {
+<span class="fc" id="L217">		this.enrolled.set(enrol);</span>
+<span class="fc" id="L218">	}</span>
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

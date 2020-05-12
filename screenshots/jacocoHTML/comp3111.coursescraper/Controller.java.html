@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Controller.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Legend27</a> &gt; <a href="index.source.html" class="el_package">comp3111.coursescraper</a> &gt; <span class="el_source">Controller.java</span></div><h1>Controller.java</h1><pre class="source lang-java linenums">package comp3111.coursescraper;
+
+import java.time.LocalTime;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.geometry.Insets;
+import javafx.scene.paint.Color;
+import javafx.util.Callback;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Vector;
+
+<span class="fc" id="L42">public class Controller {</span>
+
+	@FXML
+	private Tab tabMain;
+
+	@FXML
+	private TextField textfieldTerm;
+
+	@FXML
+	private TextField textfieldSubject;
+
+	@FXML
+	private Button buttonSearch;
+
+	@FXML
+	private TextField textfieldURL;
+
+	@FXML
+	private Tab tabStatistic;
+
+	@FXML
+	private ComboBox&lt;?&gt; comboboxTimeSlot;
+
+	@FXML
+	private Tab tabFilter;
+
+	@FXML
+	private Tab tabList;
+
+	@FXML
+	private TableView&lt;Section&gt; table;
+
+	@FXML
+	private TableColumn&lt;Section, String&gt; courseCodeColumn;
+
+	@FXML
+	private TableColumn&lt;Section, String&gt; sectionColumn;
+
+	@FXML
+	private TableColumn&lt;Section, String&gt; nameColumn;
+
+	@FXML
+	private TableColumn&lt;Section, String&gt; instructorColumn;
+
+	@FXML
+	private TableColumn&lt;Section, Boolean&gt; enrolColumn;
+
+	@FXML
+	private Tab tabTimetable;
+
+	@FXML
+	private Tab tabAllSubject;
+
+	@FXML
+	private ProgressBar progressbar;
+
+	@FXML
+	private TextField textfieldSfqUrl;
+
+	@FXML
+	private Button buttonSfqEnrollCourse;
+
+	@FXML
+	private Button buttonInstructorSfq;
+
+	@FXML
+	private TextArea textAreaConsole;
+
+	@FXML
+	private Button buttonselect;
+
+	@FXML
+	private CheckBox checkboxAM;
+
+	@FXML
+	private CheckBox checkboxPM;
+
+	@FXML
+	private CheckBox checkboxMon;
+
+	@FXML
+	private CheckBox checkboxTue;
+
+	@FXML
+	private CheckBox checkboxWed;
+
+	@FXML
+	private CheckBox checkboxThu;
+
+	@FXML
+	private CheckBox checkboxFri;
+
+	@FXML
+	private CheckBox checkboxSat;
+
+	@FXML
+	private CheckBox checkboxCom;
+
+	@FXML
+	private CheckBox checkboxExc;
+
+	@FXML
+	private CheckBox checkboxLab;
+
+<span class="fc" id="L146">	private Scraper scraper = new Scraper();</span>
+
+	// keep track of what courses we have scraped
+<span class="fc" id="L149">	private List&lt;Course&gt; course_scraped = new Vector&lt;Course&gt;();</span>
+
+	// keep track of all the courses that filtered, will updated after every
+	// filtering
+<span class="fc" id="L153">	private List&lt;Course&gt; course_filter = new Vector&lt;Course&gt;();</span>
+
+	// keep track of all the sections that filtered, will updated after every
+	// filtering
+<span class="fc" id="L157">	private List&lt;Section&gt; section_filter = new Vector&lt;Section&gt;();</span>
+
+	/**
+	 *  keep track of all the sections that are enrolled in
+	 */
+<span class="fc" id="L162">	public List&lt;Section&gt; section_enrolled = new Vector&lt;Section&gt;();</span>
+
+<span class="fc" id="L164">	int TOTAL_NUMBER_OF_COURSES = 0; // for task 5</span>
+<span class="fc" id="L165">	int ALL_SUBJECT_COUNT = 0; // for task 5</span>
+
+<span class="fc" id="L167">	boolean search_all_subject_clicked = false;</span>
+
+	/**
+	 * Control anything needed to be initialized when the controller is constructed.
+	 */
+	@FXML
+	public void initialize() {
+
+		// For task 3 tableView initialization
+<span class="fc" id="L176">		courseCodeColumn.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;CourseCode&quot;));</span>
+<span class="fc" id="L177">		sectionColumn.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;title&quot;));</span>
+<span class="fc" id="L178">		nameColumn.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;CourseName&quot;));</span>
+<span class="fc" id="L179">		instructorColumn.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;instructor&quot;));</span>
+
+		// the check box column
+<span class="fc" id="L182">		enrolColumn.setCellValueFactory(c -&gt; {</span>
+<span class="fc" id="L183">			Section section = c.getValue();</span>
+<span class="fc" id="L184">			CheckBox checkBox = new CheckBox();</span>
+<span class="fc" id="L185">			checkBox.selectedProperty().setValue(section.isEnrolled());</span>
+
+			// add the listener: a function triggered whenever the check box is clicked
+<span class="fc" id="L188">			checkBox.selectedProperty().addListener((ov, old_val, new_val) -&gt; {</span>
+<span class="fc" id="L189">				section.setEnrolled(new_val);</span>
+				// System.out.println(section.getTitle() + &quot; &quot; + section.getCourseName() + &quot; &quot; +
+				// section.isEnrolled());
+
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">				if (section.isEnrolled())</span>
+<span class="fc" id="L194">					section_enrolled.add(section);</span>
+				else
+<span class="nc" id="L196">					section_enrolled.remove(section);</span>
+
+				// task4
+<span class="fc" id="L199">				timetable(section_enrolled);</span>
+
+<span class="fc" id="L201">				textAreaConsole.setText(&quot;The following sections are enrolled: &quot; + &quot;\n&quot;);</span>
+
+<span class="fc bfc" id="L203" title="All 2 branches covered.">				for (int i = 0; i &lt; section_enrolled.size(); i++) {</span>
+<span class="fc" id="L204">					textAreaConsole.setText(textAreaConsole.getText() + &quot;\n&quot; + section_enrolled.get(i).getCourseName()</span>
+<span class="fc" id="L205">							+ &quot; &quot; + section_enrolled.get(i).getTitle());</span>
+				}
+<span class="fc" id="L207">			});</span>
+<span class="fc" id="L208">			return new SimpleObjectProperty(checkBox);</span>
+		});
+
+<span class="fc" id="L211">		table.setItems(getEnrolSection(true));</span>
+<span class="fc" id="L212">		table.setEditable(true);</span>
+
+		// task 5 initialize
+<span class="fc" id="L215">		progressbar.setProgress(0.0);</span>
+
+		// task 6 initialize
+<span class="fc" id="L218">		buttonSfqEnrollCourse.setDisable(true);</span>
+<span class="fc" id="L219">	}</span>
+
+	/**
+	 * Create a list of sections that we want to display in the table
+	 * 
+	 * @param filtered If yes: we construct our list according to the filter result.
+	 *                 If no: we construct the list from the list of scraped course
+	 * @return a list of sections to be displayed in the table
+	 */
+	public ObservableList&lt;Section&gt; getEnrolSection(boolean filtered) {
+<span class="fc" id="L229">		ObservableList&lt;Section&gt; sections = FXCollections.observableArrayList();</span>
+
+<span class="fc bfc" id="L231" title="All 2 branches covered.">		if (filtered) {</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">			for (Section s : section_filter) {</span>
+<span class="fc" id="L233">				boolean enrolled = false;</span>
+
+				// check if the section is already enrolled
+<span class="fc bfc" id="L236" title="All 2 branches covered.">				for (int j = 0; j &lt; section_enrolled.size(); j++) {</span>
+
+<span class="fc bfc" id="L238" title="All 2 branches covered.">					if (s.getTitle().equals(section_enrolled.get(j).getTitle())</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">							&amp;&amp; s.getCourseName().equals(section_enrolled.get(j).getCourseName())) {</span>
+<span class="fc" id="L240">						sections.add(section_enrolled.get(j));</span>
+<span class="fc" id="L241">						enrolled = true;</span>
+<span class="fc" id="L242">						break;</span>
+					}
+				}
+
+<span class="fc bfc" id="L246" title="All 2 branches covered.">				if (!enrolled)</span>
+<span class="fc" id="L247">					sections.add(s);</span>
+<span class="fc" id="L248">			}</span>
+		} else {
+<span class="fc bfc" id="L250" title="All 2 branches covered.">			for (Course course : course_scraped) {</span>
+<span class="fc bfc" id="L251" title="All 2 branches covered.">				for (int i = 0; i &lt; course.getNumSections(); i++) {</span>
+
+<span class="fc" id="L253">					boolean enrolled = false;</span>
+
+					// check if the section is already enrolled
+<span class="fc bfc" id="L256" title="All 2 branches covered.">					for (int j = 0; j &lt; section_enrolled.size(); j++) {</span>
+
+<span class="fc bfc" id="L258" title="All 2 branches covered.">						if (course.getSection(i).getTitle().equals(section_enrolled.get(j).getTitle()) &amp;&amp; </span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">								course.getSection(i).getCourseName().equals(section_enrolled.get(j).getCourseName())) {</span>
+<span class="fc" id="L260">							sections.add(section_enrolled.get(j));</span>
+<span class="fc" id="L261">							enrolled = true;</span>
+<span class="fc" id="L262">							break;</span>
+						}
+					}
+
+<span class="fc bfc" id="L266" title="All 2 branches covered.">					if (!enrolled)</span>
+<span class="fc" id="L267">						sections.add(course.getSection(i));</span>
+				}
+<span class="fc" id="L269">			}</span>
+
+		}
+<span class="fc" id="L272">		return sections;</span>
+	}
+
+	/**
+	 * trigger when select-all button click, check/uncheck all button
+	 */
+	@FXML
+	void buttonselectall() {
+<span class="fc bfc" id="L280" title="All 2 branches covered.">		if (buttonselect.getText().equals(&quot;Select All&quot;)) {</span>
+<span class="fc" id="L281">			buttonselect.setText(&quot;De-select All&quot;);</span>
+<span class="fc" id="L282">			checkboxAM.setSelected(true);</span>
+<span class="fc" id="L283">			checkboxPM.setSelected(true);</span>
+<span class="fc" id="L284">			checkboxMon.setSelected(true);</span>
+<span class="fc" id="L285">			checkboxTue.setSelected(true);</span>
+<span class="fc" id="L286">			checkboxWed.setSelected(true);</span>
+<span class="fc" id="L287">			checkboxThu.setSelected(true);</span>
+<span class="fc" id="L288">			checkboxFri.setSelected(true);</span>
+<span class="fc" id="L289">			checkboxSat.setSelected(true);</span>
+<span class="fc" id="L290">			checkboxCom.setSelected(true);</span>
+<span class="fc" id="L291">			checkboxExc.setSelected(true);</span>
+<span class="fc" id="L292">			checkboxLab.setSelected(true);</span>
+<span class="fc" id="L293">			filter();</span>
+		} else {
+<span class="fc" id="L295">			buttonselect.setText(&quot;Select All&quot;);</span>
+<span class="fc" id="L296">			checkboxAM.setSelected(false);</span>
+<span class="fc" id="L297">			checkboxPM.setSelected(false);</span>
+<span class="fc" id="L298">			checkboxMon.setSelected(false);</span>
+<span class="fc" id="L299">			checkboxTue.setSelected(false);</span>
+<span class="fc" id="L300">			checkboxWed.setSelected(false);</span>
+<span class="fc" id="L301">			checkboxThu.setSelected(false);</span>
+<span class="fc" id="L302">			checkboxFri.setSelected(false);</span>
+<span class="fc" id="L303">			checkboxSat.setSelected(false);</span>
+<span class="fc" id="L304">			checkboxCom.setSelected(false);</span>
+<span class="fc" id="L305">			checkboxExc.setSelected(false);</span>
+<span class="fc" id="L306">			checkboxLab.setSelected(false);</span>
+<span class="fc" id="L307">			filter();</span>
+		}
+<span class="fc" id="L309">	}</span>
+
+	// Print the course info, used in search function and filter function
+	void printTextAreaConsole(List&lt;Course&gt; courses, boolean Skip0SectionCourse) {
+
+		// textAreaConsole.setText(&quot;Filter&quot;);
+<span class="fc bfc" id="L315" title="All 2 branches covered.">		for (Course c : courses) {</span>
+<span class="fc bfc" id="L316" title="All 2 branches covered.">			if (Skip0SectionCourse)</span>
+<span class="fc bfc" id="L317" title="All 2 branches covered.">				if (c.getNumSections() == 0)</span>
+<span class="fc" id="L318">					continue;</span>
+
+<span class="fc" id="L320">			textAreaConsole.setText(textAreaConsole.getText() + &quot;\n&quot;);</span>
+
+//    	for (Course c : v) {
+//    		System.out.println(c.getNumSections()+&quot;  &quot;+ c.getNumSlots());
+//    		if (c.getNumSlots() == 0)
+//    			continue;
+
+<span class="fc" id="L327">			String newline = c.getTitle() + &quot;\n&quot;;</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">			for (int i = 0; i &lt; c.getNumSections(); i++) {</span>
+<span class="fc" id="L329">				Section s = c.getSection(i);</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">				for (int j = 0; j &lt; s.getNumSlots(); j++) {</span>
+<span class="fc" id="L331">					Slot t = s.getSlot(j);</span>
+<span class="fc" id="L332">					newline += &quot;Section:&quot; + s.getTitle() + &quot; Slot &quot; + (j + 1) + &quot;:&quot; + t + &quot;\n&quot;;</span>
+				}
+			}
+<span class="fc" id="L335">			textAreaConsole.setText(textAreaConsole.getText() + &quot;\n&quot; + newline);</span>
+<span class="fc" id="L336">		}</span>
+<span class="fc" id="L337">	}</span>
+
+	/**
+	 * Filter the course based on criteria set in tab filter, trigger when criteria
+	 * changed
+	 */
+	@FXML
+	void filter() {
+
+<span class="fc" id="L346">		this.course_filter = new Vector&lt;Course&gt;();</span>
+
+<span class="fc" id="L348">		boolean all_false[] = { false, false, false, false, false, false };</span>
+		// textAreaConsole.setText(&quot;Filter&quot;);
+<span class="fc bfc" id="L350" title="All 2 branches covered.">		for (Course c : course_scraped) {</span>
+<span class="fc bfc" id="L351" title="All 2 branches covered.">			if (checkboxExc.isSelected())</span>
+<span class="fc bfc" id="L352" title="All 2 branches covered.">				if (c.getExclusion() != &quot;null&quot;)</span>
+<span class="fc" id="L353">					continue;</span>
+<span class="fc bfc" id="L354" title="All 2 branches covered.">			if (checkboxCom.isSelected())</span>
+<span class="fc bfc" id="L355" title="All 2 branches covered.">				if (!c.getCC())</span>
+<span class="fc" id="L356">					continue;</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">			if (checkboxLab.isSelected())</span>
+<span class="pc bpc" id="L358" title="1 of 2 branches missed.">				if (!c.gethaslabortut())</span>
+<span class="nc" id="L359">					continue;</span>
+
+<span class="fc" id="L361">			Course FilterC = new Course(c);</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">			for (int i = 0; i &lt; c.getNumSections(); i++) {</span>
+<span class="fc" id="L363">				Section s = c.getSection(i);</span>
+
+				// Check days
+<span class="fc" id="L366">				boolean days[] = { checkboxMon.isSelected(), checkboxTue.isSelected(), checkboxWed.isSelected(),</span>
+<span class="fc" id="L367">						checkboxThu.isSelected(), checkboxFri.isSelected(), checkboxSat.isSelected() };</span>
+<span class="fc bfc" id="L368" title="All 2 branches covered.">				for (int j = 0; j &lt; c.getSection(i).getNumSlots(); j++) {</span>
+<span class="fc" id="L369">					int day = s.getSlot(j).getDay();</span>
+<span class="fc" id="L370">					days[day] = false;</span>
+				}
+<span class="fc bfc" id="L372" title="All 2 branches covered.">				if (!Arrays.equals(all_false, days))</span>
+<span class="fc" id="L373">					continue;</span>
+
+				// Check AM/PM
+<span class="fc" id="L376">				boolean valid = false; // used to check AM/PM filter, if criteria pass, it will turn true</span>
+<span class="pc bpc" id="L377" title="1 of 4 branches missed.">				if (checkboxAM.isSelected() &amp;&amp; checkboxPM.isSelected()) {</span>
+<span class="nc" id="L378">					boolean haveAM = false;</span>
+<span class="nc" id="L379">					boolean havePM = false;</span>
+<span class="nc bnc" id="L380" title="All 2 branches missed.">					for (int j = 0; j &lt; c.getSection(i).getNumSlots(); j++) {</span>
+<span class="nc bnc" id="L381" title="All 4 branches missed.">						if (s.getSlot(j).getStartHour() &lt; 12 &amp;&amp; s.getSlot(j).getEndHour() &gt;= 12)</span>
+<span class="nc" id="L382">							valid = true;</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">						if (s.getSlot(j).getStartHour() &lt; 12)</span>
+<span class="nc" id="L384">							haveAM = true;</span>
+<span class="nc bnc" id="L385" title="All 2 branches missed.">						if (s.getSlot(j).getStartHour() &gt;= 12)</span>
+<span class="nc" id="L386">							havePM = true;</span>
+					}
+<span class="nc bnc" id="L388" title="All 4 branches missed.">					if (haveAM == true &amp;&amp; havePM == true)</span>
+<span class="nc" id="L389">						valid = true;</span>
+<span class="pc bfc" id="L390" title="All 2 branches covered.">				} else if (checkboxAM.isSelected()) {</span>
+<span class="fc bfc" id="L391" title="All 2 branches covered.">					for (int j = 0; j &lt; c.getSection(i).getNumSlots(); j++) {</span>
+<span class="fc bfc" id="L392" title="All 2 branches covered.">						if (s.getSlot(j).getStartHour() &lt; 12)</span>
+<span class="fc" id="L393">							valid = true;</span>
+					}
+<span class="pc bpc" id="L395" title="1 of 2 branches missed.">				} else if (checkboxPM.isSelected()) {</span>
+<span class="nc bnc" id="L396" title="All 2 branches missed.">					for (int j = 0; j &lt; c.getSection(i).getNumSlots(); j++) {</span>
+<span class="nc bnc" id="L397" title="All 2 branches missed.">						if (s.getSlot(j).getEndHour() &gt;= 12)</span>
+<span class="nc" id="L398">							valid = true;</span>
+					}
+				} else
+<span class="fc" id="L401">					valid = true;</span>
+
+<span class="fc bfc" id="L403" title="All 2 branches covered.">				if (!valid)</span>
+<span class="fc" id="L404">					continue;</span>
+
+<span class="fc" id="L406">				FilterC.addSection(s);</span>
+			}
+
+<span class="fc" id="L409">			this.course_filter.add(FilterC);</span>
+<span class="fc" id="L410">			textAreaConsole.setText(&quot;Filtered:&quot;);</span>
+<span class="fc" id="L411">		}</span>
+
+<span class="fc" id="L413">		section_filter = new Vector&lt;Section&gt;();</span>
+<span class="fc bfc" id="L414" title="All 2 branches covered.">		for (Course c : course_filter) {</span>
+<span class="fc bfc" id="L415" title="All 2 branches covered.">			for (int i = 0; i &lt; c.getNumSections(); i++) {</span>
+<span class="fc" id="L416">				Section section = c.getSection(i);</span>
+<span class="fc" id="L417">				section_filter.add(section);</span>
+			}
+<span class="fc" id="L419">		}</span>
+<span class="fc" id="L420">		table.setItems(getEnrolSection(true));</span>
+
+<span class="fc" id="L422">		this.printTextAreaConsole(course_filter, true);</span>
+<span class="fc" id="L423">	}</span>
+
+	/**
+	 * Clicked once: Display the Total Number of Categories: ALL_SUBJECT_COUNT
+	 * Clicked twice: scrape all the course according to the list of subjects, reset
+	 * list of scraped course and list of filtered course
+	 * 
+	 * @throws Exception
+	 */
+	@FXML
+	void allSubjectSearch() throws Exception {
+		// Task6 Find SFQ with my enrolled courses enabled
+<span class="fc" id="L435">		buttonSfqEnrollCourse.setDisable(false);</span>
+
+		// WebClient client = new WebClient();
+
+<span class="fc" id="L439">		String baseurl = textfieldURL.getText();</span>
+<span class="fc" id="L440">		String term = textfieldTerm.getText();</span>
+<span class="fc" id="L441">		String home = &quot;ACCT&quot;;</span>
+
+		// Create a list containing all the subjects HtmlElement
+<span class="fc" id="L444">		List&lt;String&gt; subjects = scraper.searchSubject(baseurl, term, home);</span>
+
+<span class="fc" id="L446">		ALL_SUBJECT_COUNT = subjects.size();</span>
+
+<span class="fc bfc" id="L448" title="All 2 branches covered.">		if (search_all_subject_clicked == false) {</span>
+<span class="fc" id="L449">			search_all_subject_clicked = true;</span>
+<span class="fc" id="L450">			textAreaConsole.setText(&quot;Total Number of Categories/Code Prefix: &quot; + ALL_SUBJECT_COUNT);</span>
+<span class="fc" id="L451">			return;</span>
+		}
+
+<span class="fc" id="L454">		course_scraped.clear();</span>
+<span class="fc" id="L455">		course_filter.clear();</span>
+<span class="fc" id="L456">		section_filter.clear();</span>
+		
+<span class="fc" id="L458">		TOTAL_NUMBER_OF_COURSES = 0;</span>
+
+<span class="fc" id="L460">		class bg_Thread implements Runnable {</span>
+
+<span class="fc" id="L462">			double subject_scraped = 0;</span>
+<span class="fc" id="L463">			double progress = 0;</span>
+
+			@Override
+			public void run() {
+<span class="pc bpc" id="L467" title="1 of 2 branches missed.">				for (String sub : (List&lt;String&gt;) subjects) {</span>
+<span class="fc" id="L468">					List&lt;Course&gt; courses = scraper.scrape(baseurl, term, sub);</span>
+					// System.out.println(sub);
+
+<span class="fc bfc" id="L471" title="All 2 branches covered.">					for (int i = 0; i &lt; courses.size(); i++) {</span>
+<span class="fc" id="L472">						course_scraped.add(courses.get(i));</span>
+					}
+
+<span class="fc" id="L475">					System.out.println(sub + &quot; is done.&quot;);</span>
+
+<span class="fc" id="L477">					TOTAL_NUMBER_OF_COURSES += courses.size();</span>
+<span class="fc" id="L478">					subject_scraped += 1;</span>
+
+<span class="fc" id="L480">					progress = subject_scraped / ALL_SUBJECT_COUNT;</span>
+
+<span class="fc" id="L482">					progressbar.setProgress(progress);</span>
+					// System.out.println(progressbar.getProgress());
+<span class="fc" id="L484">				}</span>
+
+<span class="nc" id="L486">				textAreaConsole.setText(textAreaConsole.getText() + &quot;\n&quot; + &quot;Total Number of Courses fetched: &quot;</span>
+						+ TOTAL_NUMBER_OF_COURSES);
+<span class="nc" id="L488">				search_all_subject_clicked = false;</span>
+
+<span class="nc" id="L490">				table.setItems(getEnrolSection(false));</span>
+
+<span class="nc" id="L492">				buttonselect.setText(&quot;Select All&quot;);</span>
+<span class="nc" id="L493">				checkboxAM.setSelected(false);</span>
+<span class="nc" id="L494">				checkboxPM.setSelected(false);</span>
+<span class="nc" id="L495">				checkboxMon.setSelected(false);</span>
+<span class="nc" id="L496">				checkboxTue.setSelected(false);</span>
+<span class="nc" id="L497">				checkboxWed.setSelected(false);</span>
+<span class="nc" id="L498">				checkboxThu.setSelected(false);</span>
+<span class="nc" id="L499">				checkboxFri.setSelected(false);</span>
+<span class="nc" id="L500">				checkboxSat.setSelected(false);</span>
+<span class="nc" id="L501">				checkboxCom.setSelected(false);</span>
+<span class="nc" id="L502">				checkboxExc.setSelected(false);</span>
+<span class="nc" id="L503">				checkboxLab.setSelected(false);</span>
+
+<span class="nc" id="L505">			}</span>
+		}
+
+<span class="fc" id="L508">		Thread th = new Thread(new bg_Thread());</span>
+<span class="fc" id="L509">		th.start();</span>
+
+<span class="fc" id="L511">	}</span>
+
+	@FXML
+	void findInstructorSfq() {
+<span class="fc" id="L515">		String url = textfieldSfqUrl.getText();</span>
+<span class="fc" id="L516">		List&lt;InstructorSFQ&gt; result = scraper.findInstructorSFQ(url);</span>
+<span class="fc bfc" id="L517" title="All 2 branches covered.">		if (result == null) {</span>
+<span class="fc" id="L518">			textAreaConsole.setText(ErrorHandling.getErrorMessage());</span>
+		} else {
+<span class="fc" id="L520">			textAreaConsole.setText(&quot;&quot;);</span>
+<span class="fc bfc" id="L521" title="All 2 branches covered.">			for (InstructorSFQ r : result) {</span>
+<span class="fc" id="L522">				textAreaConsole.setText(textAreaConsole.getText() + r.toString() + &quot;\n&quot;);</span>
+<span class="fc" id="L523">			}</span>
+		}
+		;
+
+<span class="fc" id="L527">	}</span>
+
+	@FXML
+	void findSfqEnrollCourse() {
+
+<span class="fc" id="L532">		String url = textfieldSfqUrl.getText();</span>
+<span class="fc" id="L533">		List&lt;String&gt; enrolled_code = new ArrayList&lt;String&gt;();</span>
+
+<span class="fc bfc" id="L535" title="All 2 branches covered.">		for (Section section : section_enrolled) {</span>
+<span class="fc" id="L536">			enrolled_code.add(section.getCourseCode());</span>
+<span class="fc" id="L537">		}</span>
+<span class="fc" id="L538">		List&lt;String&gt; Distinct_enrolled_code = enrolled_code.stream().sorted().distinct().collect(Collectors.toList());</span>
+		/*
+		 * for (String code : Distinct_enrolled_code) { System.out.println(code); }
+		 */
+
+<span class="fc" id="L543">		List&lt;String&gt; result = scraper.findCourseSFQ(url, Distinct_enrolled_code);</span>
+<span class="pc bpc" id="L544" title="1 of 2 branches missed.">		if (result == null) {</span>
+<span class="nc" id="L545">			textAreaConsole.setText(ErrorHandling.getErrorMessage());</span>
+		} else {
+<span class="fc" id="L547">			textAreaConsole.setText(&quot;&quot;);</span>
+<span class="fc bfc" id="L548" title="All 2 branches covered.">			for (String r : result) {</span>
+<span class="fc" id="L549">				textAreaConsole.setText(textAreaConsole.getText() + r + &quot;\n&quot;);</span>
+<span class="fc" id="L550">			}</span>
+		}
+		;
+<span class="fc" id="L553">	}</span>
+
+	@FXML
+	void search() {
+		// Task 6 Find SFQ with my enrolled courses enabled
+<span class="fc" id="L558">		buttonSfqEnrollCourse.setDisable(false);</span>
+
+<span class="fc" id="L560">		List&lt;Course&gt; v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), textfieldSubject.getText());</span>
+<span class="fc bfc" id="L561" title="All 2 branches covered.">		if (v == null)</span>
+<span class="fc" id="L562">			textAreaConsole.setText(ErrorHandling.getErrorMessage());</span>
+		else {
+<span class="fc" id="L564">			int TotalNumOfCourses = 0;</span>
+<span class="fc" id="L565">			int TotalNumOfSlots = 0;</span>
+<span class="fc" id="L566">			LocalTime time = LocalTime.of(15, 10, 00, 0000);</span>
+<span class="fc" id="L567">			ArrayList&lt;String&gt; InstructorArr = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L568">			ArrayList&lt;String&gt; UnavInstructorArr = new ArrayList&lt;String&gt;();</span>
+<span class="fc bfc" id="L569" title="All 2 branches covered.">			for (Course c : v) {</span>
+<span class="fc" id="L570">				TotalNumOfSlots += c.getNumSlots();</span>
+<span class="fc bfc" id="L571" title="All 2 branches covered.">				if (c.getNumSlots() != 0) {</span>
+//    				System.out.println(c.getNumSlots());
+<span class="fc" id="L573">					TotalNumOfCourses++;</span>
+				}
+
+<span class="fc bfc" id="L576" title="All 2 branches covered.">				for (int i = 0; i &lt; c.getNumSections(); i++) {</span>
+<span class="fc" id="L577">					Section s = c.getSection(i);</span>
+<span class="fc bfc" id="L578" title="All 2 branches covered.">					for (int j = 0; j &lt; s.getNumSlots(); j++) {</span>
+<span class="fc" id="L579">						Slot t = s.getSlot(j);</span>
+<span class="fc" id="L580">						String instr = t.getInstructor();</span>
+<span class="pc bpc" id="L581" title="1 of 2 branches missed.">						if (!instr.isEmpty()) {</span>
+<span class="fc" id="L582">							String[] insplit = instr.split(&quot;\\r?\\n&quot;);</span>
+<span class="fc bfc" id="L583" title="All 2 branches covered.">							for (int k = 0; k &lt; insplit.length; ++k) {</span>
+//							System.out.print(j+ insplit[j]+&quot; &quot;);
+<span class="fc" id="L585">								InstructorArr.add(insplit[k].trim());</span>
+<span class="fc bfc" id="L586" title="All 6 branches covered.">								if ((t.getDay() == 3) &amp;&amp; (t.getStart().isBefore(time)) &amp;&amp; (t.getEnd().isAfter(time)))</span>
+<span class="fc" id="L587">									UnavInstructorArr.add(insplit[k]);</span>
+							}
+//						System.out.println();
+						}
+					}
+				}
+<span class="fc" id="L593">			}</span>
+
+			// Make array sorted and distinct
+<span class="fc" id="L596">			List&lt;String&gt; DistinctInstructorArr = InstructorArr.stream().sorted().distinct()</span>
+<span class="fc" id="L597">					.collect(Collectors.toList());</span>
+<span class="fc" id="L598">			List&lt;String&gt; DistinctUnavInstructorArr = UnavInstructorArr.stream().sorted().distinct()</span>
+<span class="fc" id="L599">					.collect(Collectors.toList());</span>
+
+			// Remove unavailable
+<span class="fc" id="L602">			DistinctInstructorArr.removeAll(DistinctUnavInstructorArr);</span>
+			// Remove TBA
+<span class="fc" id="L604">			DistinctInstructorArr.remove(&quot;TBA&quot;);</span>
+
+			// TextAreaConsole controller
+<span class="fc" id="L607">			textAreaConsole.setText(&quot;Total Number of courses: &quot; + TotalNumOfCourses);</span>
+<span class="fc" id="L608">			textAreaConsole.setText(textAreaConsole.getText() + &quot;\n&quot; + &quot;Total Number of slots: &quot; + TotalNumOfSlots);</span>
+
+<span class="fc" id="L610">			textAreaConsole.setText(textAreaConsole.getText() + &quot;\n&quot;</span>
+					+ &quot;Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm :&quot;);
+<span class="fc bfc" id="L612" title="All 2 branches covered.">			for (String i : DistinctInstructorArr) {</span>
+<span class="fc" id="L613">				textAreaConsole.setText(textAreaConsole.getText() + &quot;\n&quot; + i);</span>
+<span class="fc" id="L614">			}</span>
+
+			// textAreaConsole.setText(textAreaConsole.getText() + &quot;\t Before all_false&quot;);
+
+			// Record the course we have scraped
+<span class="fc" id="L619">			this.course_scraped = v;</span>
+<span class="fc" id="L620">			this.printTextAreaConsole(course_scraped, false);</span>
+
+<span class="fc" id="L622">			table.setItems(getEnrolSection(false));</span>
+		}
+<span class="fc" id="L624">	}</span>
+
+<span class="fc" id="L626">	private List&lt;Label&gt; EnrolledLabel = new Vector&lt;Label&gt;();</span>
+<span class="fc" id="L627">	private List&lt;Label&gt; EnrolledLabelBack = new Vector&lt;Label&gt;();</span>
+
+	/**
+	 * Create a timetable based on enrolled section
+	 * 
+	 * @param sections List of sections that is enrolled by user
+	 */
+	public void timetable(List&lt;Section&gt; sections) {
+<span class="fc" id="L635">		AnchorPane ap = (AnchorPane) tabTimetable.getContent();</span>
+
+<span class="fc" id="L637">		ap.getChildren().removeAll(EnrolledLabel);</span>
+<span class="fc" id="L638">		ap.getChildren().removeAll(EnrolledLabelBack);</span>
+<span class="fc" id="L639">		EnrolledLabel.clear();</span>
+<span class="fc" id="L640">		EnrolledLabelBack.clear();</span>
+
+		// System.out.println(&quot;Timetable&quot;);
+<span class="fc bfc" id="L643" title="All 2 branches covered.">		for (Section se : sections) {</span>
+			// random colors background generator
+<span class="fc" id="L645">			double r1 = Math.random();</span>
+<span class="fc" id="L646">			double r2 = Math.random();</span>
+<span class="fc" id="L647">			double r3 = Math.random();</span>
+<span class="fc bfc" id="L648" title="All 2 branches covered.">			if (r1 &lt; 0.5)</span>
+<span class="fc" id="L649">				r1 = 0.5 + r1;</span>
+<span class="fc bfc" id="L650" title="All 2 branches covered.">			if (r2 &lt; 0.5)</span>
+<span class="fc" id="L651">				r2 = 0.5 + r2;</span>
+<span class="fc bfc" id="L652" title="All 2 branches covered.">			if (r3 &lt; 0.5)</span>
+<span class="fc" id="L653">				r3 = 0.5 + r3;</span>
+<span class="fc bfc" id="L654" title="All 2 branches covered.">			for (int i = 0; i &lt; se.getNumSlots(); i++) {</span>
+				// System.out.println(se.getCourseName());
+<span class="fc" id="L656">				Slot s = se.getSlot(i);</span>
+<span class="fc" id="L657">				Label randomLabelBack = new Label();</span>
+<span class="fc" id="L658">				Label randomLabel = new Label(se.getCourseCode() + &quot;\n&quot; + se.getTitle());</span>
+<span class="fc" id="L659">				double startY = 40 + (s.getStartHour() - 9) * 20 + s.getStartMinute() * 10 / 30;</span>
+<span class="fc" id="L660">				double startX = (s.getDay() + 1) * 100;</span>
+<span class="fc" id="L661">				double Height = (s.getEndHour() - s.getStartHour()) * 20</span>
+<span class="fc" id="L662">						+ (s.getEndMinute() - s.getStartMinute()) * 10 / 30;</span>
+<span class="fc" id="L663">				double Width = 100;</span>
+				// System.out.println(s.getStartHour() + &quot;\n&quot; + startX + &quot;\n&quot; + startY + &quot;\n&quot; +
+				// Height);
+<span class="fc" id="L666">				randomLabelBack.setBackground(</span>
+<span class="fc" id="L667">						new Background(new BackgroundFill(Color.color(r1, r2, r3), CornerRadii.EMPTY, Insets.EMPTY)));</span>
+<span class="fc" id="L668">				randomLabelBack.setOpacity(0.4);</span>
+<span class="fc" id="L669">				randomLabelBack.setLayoutX(startX);</span>
+<span class="fc" id="L670">				randomLabelBack.setLayoutY(startY);</span>
+<span class="fc" id="L671">				randomLabelBack.setMinWidth(Width);</span>
+<span class="fc" id="L672">				randomLabelBack.setMaxWidth(Width);</span>
+<span class="fc" id="L673">				randomLabelBack.setMinHeight(Height);</span>
+<span class="fc" id="L674">				randomLabelBack.setMaxHeight(Height);</span>
+
+<span class="fc" id="L676">				randomLabel.setTextFill(Color.BLACK);</span>
+<span class="fc" id="L677">				randomLabel.setOpacity(0.5);</span>
+<span class="fc" id="L678">				randomLabel.setLayoutX(startX);</span>
+<span class="fc" id="L679">				randomLabel.setLayoutY(startY);</span>
+<span class="fc" id="L680">				randomLabel.setMinWidth(Width);</span>
+<span class="fc" id="L681">				randomLabel.setMaxWidth(Width);</span>
+<span class="fc" id="L682">				randomLabel.setMinHeight(30);</span>
+<span class="fc" id="L683">				randomLabel.setMaxHeight(30);</span>
+
+<span class="fc" id="L685">				EnrolledLabelBack.add(randomLabelBack);</span>
+<span class="fc" id="L686">				EnrolledLabel.add(randomLabel);</span>
+			}
+<span class="fc" id="L688">		}</span>
+
+<span class="fc" id="L690">		ap.getChildren().addAll(EnrolledLabelBack);</span>
+<span class="fc" id="L691">		ap.getChildren().addAll(EnrolledLabel);</span>
+<span class="fc" id="L692">	}</span>
+
+	/**
+	 * string self define assist function
+	 * @param str String
+	 * @return boolean
+	 */
+	public boolean equals(String str) {
+<span class="nc bnc" id="L700" title="All 2 branches missed.">		if (str == null)</span>
+<span class="nc" id="L701">			return false;</span>
+<span class="nc bnc" id="L702" title="All 2 branches missed.">		if (this.equals(str))</span>
+<span class="nc" id="L703">			return true;</span>
+		else
+<span class="nc" id="L705">			return false;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

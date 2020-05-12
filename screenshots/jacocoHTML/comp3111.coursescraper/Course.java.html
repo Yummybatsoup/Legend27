@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Course.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Legend27</a> &gt; <a href="index.source.html" class="el_package">comp3111.coursescraper</a> &gt; <span class="el_source">Course.java</span></div><h1>Course.java</h1><pre class="source lang-java linenums">package comp3111.coursescraper;
+
+
+
+public class Course {
+	private static final int DEFAULT_MAX_Section = 50;
+	
+	// code refer to the course code
+	private String code;
+	
+	private String title ; 
+	private String description ;
+	private String exclusion;
+	private boolean hasCC;
+	private Section [] sections;
+	private int numSections;
+	
+<span class="fc" id="L18">	public Course() {</span>
+<span class="fc" id="L19">		code = &quot;UST0000&quot;;</span>
+<span class="fc" id="L20">		sections = new Section[DEFAULT_MAX_Section];</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">		for (int i = 0; i &lt; DEFAULT_MAX_Section; i++) </span>
+<span class="fc" id="L22">			sections[i] = null;</span>
+<span class="fc" id="L23">		numSections = 0;</span>
+<span class="fc" id="L24">	}</span>
+	
+	//copy constructor with no section(used for task2)
+<span class="fc" id="L27">	public Course(Course c) {</span>
+<span class="fc" id="L28">		this.code = c.code;</span>
+<span class="fc" id="L29">		this.title = c.title;</span>
+<span class="fc" id="L30">		this.description = c.description;</span>
+<span class="fc" id="L31">		this.exclusion = c.exclusion;</span>
+<span class="fc" id="L32">		this.hasCC = c.hasCC;</span>
+<span class="fc" id="L33">		sections = new Section[DEFAULT_MAX_Section];</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">		for (int i = 0; i &lt; DEFAULT_MAX_Section; i++) </span>
+<span class="fc" id="L35">			sections[i] = null;</span>
+<span class="fc" id="L36">		numSections = 0;</span>
+<span class="fc" id="L37">	}</span>
+	
+	public void addSection(Section s) {
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">		if (numSections &gt;= DEFAULT_MAX_Section)</span>
+<span class="nc" id="L41">			return;</span>
+<span class="fc" id="L42">		sections[numSections++] = s.clone();</span>
+<span class="fc" id="L43">	}</span>
+	
+	public Section getSection(int i) {
+<span class="pc bpc" id="L46" title="2 of 4 branches missed.">		if (i &gt;= 0 &amp;&amp; i &lt; numSections)</span>
+<span class="fc" id="L47">			return sections[i];</span>
+<span class="nc" id="L48">		return null;</span>
+	}
+
+	/**
+	 * return title
+	 * @return title
+	 */
+	public String getTitle() {
+<span class="fc" id="L56">		return title;</span>
+	}
+
+	/**
+	 * set title
+	 * @param title the course title
+	 */
+	public void setTitle(String title) {
+<span class="fc" id="L64">		this.title = title;</span>
+<span class="fc" id="L65">	}</span>
+	
+	/**
+	 * set code
+	 * @param code the course code
+	 */
+	public void setCourseCode(String code) {
+<span class="fc" id="L72">		this.code = code;</span>
+<span class="fc" id="L73">	}</span>
+
+
+	/**
+	 * return description
+	 * @return the description
+	 */
+	public String getDescription() {
+<span class="nc" id="L81">		return description;</span>
+	}
+
+	/**
+	 * Set the description
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+<span class="nc" id="L89">		this.description = description;</span>
+<span class="nc" id="L90">	}</span>
+
+	/**
+	 * return exclusion
+	 * @return the exclusion
+	 */
+	public String getExclusion() {
+<span class="fc" id="L97">		return exclusion;</span>
+	}
+
+	/**
+	 * @param exclusion the exclusion to set
+	 */
+	public void setExclusion(String exclusion) {
+<span class="fc" id="L104">		this.exclusion = exclusion;</span>
+<span class="fc" id="L105">	}</span>
+	
+	
+	public boolean getCC() {
+<span class="fc" id="L109">		return hasCC;</span>
+	}
+
+	
+	public void setCC(boolean cc) {
+<span class="fc" id="L114">		this.hasCC = cc;</span>
+<span class="fc" id="L115">	}</span>
+	
+	public boolean gethaslabortut() {
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">		for(int i=0;i&lt;this.numSections;i++) {</span>
+<span class="pc bpc" id="L119" title="1 of 4 branches missed.">			if(this.sections[i].getTitle().contains(&quot;LA&quot;) || this.sections[i].getTitle().contains(&quot;T&quot;))</span>
+<span class="fc" id="L120">				return true;</span>
+		}
+<span class="nc" id="L122">		return false;</span>
+	}
+
+	/**
+	 * @return numSections the numSections
+	 */
+	public int getNumSections() {
+<span class="fc" id="L129">		return numSections;</span>
+	}
+
+	/**
+	 * @param numSections the numSlots to set
+	 */
+	public void setNumSections(int numSections) {
+<span class="nc" id="L136">		this.numSections = numSections;</span>
+<span class="nc" id="L137">	}</span>
+	
+	public int getNumSlots() {
+<span class="fc" id="L140">		int num = 0;</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">		for(int i = 0; i &lt; this.numSections;i++) {</span>
+<span class="fc" id="L142">			num += this.sections[i].getNumSlots();</span>
+		}
+<span class="fc" id="L144">		return num;</span>
+	}
+	
+	public String getCourseCode() {
+<span class="fc" id="L148">		return this.code;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Slot.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Legend27</a> &gt; <a href="index.source.html" class="el_package">comp3111.coursescraper</a> &gt; <span class="el_source">Slot.java</span></div><h1>Slot.java</h1><pre class="source lang-java linenums">package comp3111.coursescraper;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.time.LocalTime;
+import java.util.Locale;
+import java.time.format.DateTimeFormatter;
+
+/**
+* &lt;h1&gt;Slot class&lt;/h1&gt;
+* This class is to declare a slot class with param, 
+* 	private int day;
+*	private LocalTime start;
+*	private LocalTime end;
+*	private String venue;
+*	private String instructor;
+*	public static final String DAYS[] = {&quot;Mo&quot;, &quot;Tu&quot;, &quot;We&quot;, &quot;Th&quot;, &quot;Fr&quot;, &quot;Sa&quot;};
+*	public static final Map with String and Integer DAYS_MAP
+*/
+<span class="fc" id="L20">public class Slot {</span>
+	private int day;
+	private LocalTime start;
+	private LocalTime end;
+	private String venue;
+	private String instructor;
+<span class="fc" id="L26">	public static final String DAYS[] = {&quot;Mo&quot;, &quot;Tu&quot;, &quot;We&quot;, &quot;Th&quot;, &quot;Fr&quot;, &quot;Sa&quot;};</span>
+<span class="fc" id="L27">	public static final Map&lt;String, Integer&gt; DAYS_MAP = new HashMap&lt;String, Integer&gt;();</span>
+	static {
+<span class="fc bfc" id="L29" title="All 2 branches covered.">		for (int i = 0; i &lt; DAYS.length; i++)</span>
+<span class="fc" id="L30">			DAYS_MAP.put(DAYS[i], i);</span>
+<span class="fc" id="L31">	}</span>
+
+	@Override
+	public Slot clone() {
+<span class="fc" id="L35">		Slot s = new Slot();</span>
+<span class="fc" id="L36">		s.day = this.day;</span>
+<span class="fc" id="L37">		s.start = this.start;</span>
+<span class="fc" id="L38">		s.end = this.end;</span>
+<span class="fc" id="L39">		s.venue = this.venue;</span>
+<span class="fc" id="L40">		s.instructor = this.instructor;</span>
+<span class="fc" id="L41">		return s;</span>
+	}
+	
+
+	/**
+	 * @return String DAYS[day] + start.toString() + &quot;-&quot; + end.toString() + &quot; Venue :&quot; + venue;
+	 */
+	public String toString() {
+<span class="fc" id="L49">		return DAYS[day] + start.toString() + &quot;-&quot; + end.toString() + &quot; Venue :&quot; + venue;</span>
+	}
+	
+
+	/**
+	 * @return start.getHour
+	 */
+	public int getStartHour() {
+<span class="fc" id="L57">		return start.getHour();</span>
+	}
+	
+
+	/**
+	 * @return start.getMinute
+	 */
+	public int getStartMinute() {
+<span class="fc" id="L65">		return start.getMinute();</span>
+	}
+
+	/**
+	 * @return end.getHour
+	 */
+	public int getEndHour() {
+<span class="fc" id="L72">		return end.getHour();</span>
+	}
+	/**
+	 * @return end.getMinute
+	 */
+	public int getEndMinute() {
+<span class="fc" id="L78">		return end.getMinute();</span>
+	}
+	/**
+	 * @return the start
+	 */
+	public LocalTime getStart() {
+<span class="fc" id="L84">		return start;</span>
+	}
+	/**
+	 * @param start the start to set
+	 */
+	public void setStart(String start) {
+<span class="fc" id="L90">		this.start = LocalTime.parse(start, DateTimeFormatter.ofPattern(&quot;hh:mma&quot;, Locale.US));</span>
+<span class="fc" id="L91">	}</span>
+	/**
+	 * @return the end
+	 */
+	public LocalTime getEnd() {
+<span class="fc" id="L96">		return end;</span>
+	}
+	/**
+	 * @param end the end to set
+	 */
+	public void setEnd(String end) {
+<span class="fc" id="L102">		this.end = LocalTime.parse(end, DateTimeFormatter.ofPattern(&quot;hh:mma&quot;, Locale.US));</span>
+<span class="fc" id="L103">	}</span>
+	/**
+	 * @return the venue
+	 */
+	public String getVenue() {
+<span class="nc" id="L108">		return venue;</span>
+	}
+	/**
+	 * @param venue the venue to set
+	 */
+	public void setVenue(String venue) {
+<span class="fc" id="L114">		this.venue = venue;</span>
+<span class="fc" id="L115">	}</span>
+
+	/**
+	 * @return the day
+	 */
+	public int getDay() {
+<span class="fc" id="L121">		return day;</span>
+	}
+	/**
+	 * @param day the day to set
+	 */
+	public void setDay(int day) {
+<span class="fc" id="L127">		this.day = day;</span>
+<span class="fc" id="L128">	}</span>
+	
+	/**
+	 * @return the instructor
+	 */
+	public String getInstructor() {
+<span class="fc" id="L134">		return instructor;</span>
+	}
+
+	/**
+	 * @param instructor the instructor to set
+	 */
+	public void setInstructor(String instructor) {
+<span class="fc" id="L141">		this.instructor = instructor;</span>
+<span class="fc" id="L142">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
