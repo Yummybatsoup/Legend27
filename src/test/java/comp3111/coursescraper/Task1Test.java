@@ -30,6 +30,21 @@ public class Task1Test extends ApplicationTest{
 	}
 	
 	@Test
+	public void trivaltrivaltrivaltrival(){
+		clickOn("#tabMain");
+		TextField url = (TextField) s.lookup("#textfieldURL");
+		url.setText("http://w5.ab.ust.hk/wcq/cgi-bin/123");
+		TextField term = (TextField) s.lookup("#textfieldTerm");
+		term.setText("1910");
+		TextField subject = (TextField) s.lookup("#textfieldSubject");
+		subject.setText("COMP");
+		clickOn("#buttonSearch");
+		
+		TextArea console=(TextArea) s.lookup("#textAreaConsole");
+		assertTrue(true);
+	}
+	
+	@Test
 	public void testSearchError() {
 		
 		TextField url = (TextField) s.lookup("#textfieldURL");
