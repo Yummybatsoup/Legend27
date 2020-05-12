@@ -14,19 +14,9 @@ Handling displaying data and error message in the console after search button is
 ### Alternative Flows
 #### S1. Incorrect base URL
 
-1.	{Search Information} If the system receives the base URL, that have no data inside or have empty URL
-2.	Console will display “input wrong URL” message
-Ask the user to reinput the URL, to {Enter Input}
+1.	{Search Information} If the system receives the URL, that have no data inside or have empty URL
+2.	Console will display “invalid URL” message
 
-#### S2. Incorrect Terms 
-1.	{Search Information} If the system receives the Terms that are not defined.
-2.	Console will display “Undefined Terms” message, with the explainion of how to input the Terms, such as the term consist of 4 numbers, first two represent the academic year and the last two refer to the semester.
-3.	Ask the user to reinput the Terms, to {Enter Input}
-
-#### S3. Incorrect Subject 
-1.	{Search Information} If the system receives the subject that are not defined.
-2.	Console will display “Undefined Subject” message, with the list of all defined subject.
-3.	Ask the user to reinput the Subject, to {Enter Input }
 
 # User-case: View Timetable
 
