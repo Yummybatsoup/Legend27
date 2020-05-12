@@ -157,11 +157,11 @@ public class Controller {
 	private List<Section> section_filter = new Vector<Section>();
 
 	// keep track of all the sections that are enrolled in
-	private List<Section> section_enrolled = new Vector<Section>();
+	public List<Section> section_enrolled = new Vector<Section>();
 
 	int TOTAL_NUMBER_OF_COURSES = 0; // for task 5
 	int ALL_SUBJECT_COUNT = 0; // for task 5
-	
+
 	boolean search_all_subject_clicked = false;
 
 	/**
@@ -197,13 +197,10 @@ public class Controller {
 				timetable(section_enrolled);
 
 				textAreaConsole.setText("The following sections are enrolled: " + "\n");
-				
+
 				for (int i = 0; i < section_enrolled.size(); i++) {
-					textAreaConsole.setText(textAreaConsole.getText() + "\n" + 
-							section_enrolled.get(i).getCourseCode() + " " + 
-							section_enrolled.get(i).getCourseName() + " " + 
-							section_enrolled.get(i).getTitle()
-							);
+					textAreaConsole.setText(textAreaConsole.getText() + "\n" + section_enrolled.get(i).getCourseName()
+							+ " " + section_enrolled.get(i).getTitle());
 				}
 			});
 			return new SimpleObjectProperty(checkBox);
@@ -220,48 +217,61 @@ public class Controller {
 	}
 
 	/**
-	 *  Create a list of sections that we want to display in the table
-	 * @param filtered If yes: we construct our list according to the filter result. If no: we construct the list from the list of scraped course
+	 * Create a list of sections that we want to display in the table
+	 * 
+	 * @param filtered If yes: we construct our list according to the filter result.
+	 *                 If no: we construct the list from the list of scraped course
 	 * @return a list of sections to be displayed in the table
 	 */
 	public ObservableList<Section> getEnrolSection(boolean filtered) {
 		ObservableList<Section> sections = FXCollections.observableArrayList();
-		
-		System.out.println("getEnrolSection called");
-		
+
 		if (filtered) {
 			for (Section s : section_filter) {
-				sections.add(s);
+				boolean enrolled = false;
+
+				// check if the section is already enrolled
+				for (int j = 0; j < section_enrolled.size(); j++) {
+
+					if (s.getTitle().equals(section_enrolled.get(j).getTitle())
+							&& s.getCourseName().equals(section_enrolled.get(j).getCourseName())) {
+						sections.add(section_enrolled.get(j));
+						enrolled = true;
+						break;
+					}
+				}
+
+				if (!enrolled)
+					sections.add(s);
 			}
-		}else {
+		} else {
 			for (Course course : course_scraped) {
 				for (int i = 0; i < course.getNumSections(); i++) {
-					
+
 					boolean enrolled = false;
-					
+
 					// check if the section is already enrolled
-					for (int j = 0; j < section_enrolled.size(); j ++) {
-						
-						if (course.getSection(i).getTitle().equals(section_enrolled.get(j).getTitle())
-								&& course.getSection(i).getCourseName().equals(section_enrolled.get(j).getCourseName())) {
+					for (int j = 0; j < section_enrolled.size(); j++) {
+
+						if (course.getSection(i).getTitle().equals(section_enrolled.get(j).getTitle()) && 
+								course.getSection(i).getCourseName().equals(section_enrolled.get(j).getCourseName())) {
 							sections.add(section_enrolled.get(j));
-							System.out.println(section_enrolled.get(j).getTitle() + " " + section_enrolled.get(j).getCourseName());
 							enrolled = true;
 							break;
 						}
 					}
-					
+
 					if (!enrolled)
 						sections.add(course.getSection(i));
 				}
 			}
-			
+
 		}
 		return sections;
 	}
-	
+
 	/**
-	 *  trigger when select-all button click, check/uncheck all button
+	 * trigger when select-all button click, check/uncheck all button
 	 */
 	@FXML
 	void buttonselectall() {
@@ -301,8 +311,8 @@ public class Controller {
 
 		// textAreaConsole.setText("Filter");
 		for (Course c : courses) {
-			if(Skip0SectionCourse)
-				if(c.getNumSections() == 0)
+			if (Skip0SectionCourse)
+				if (c.getNumSections() == 0)
 					continue;
 
 			textAreaConsole.setText(textAreaConsole.getText() + "\n");
@@ -325,13 +335,14 @@ public class Controller {
 	}
 
 	/**
-	 *  Filter the course based on criteria set in tab filter, trigger when criteria changed
+	 * Filter the course based on criteria set in tab filter, trigger when criteria
+	 * changed
 	 */
 	@FXML
 	void filter() {
 
 		this.course_filter = new Vector<Course>();
-		
+
 		boolean all_false[] = { false, false, false, false, false, false };
 		// textAreaConsole.setText("Filter");
 		for (Course c : course_scraped) {
@@ -344,12 +355,12 @@ public class Controller {
 			if (checkboxLab.isSelected())
 				if (!c.gethaslabortut())
 					continue;
-			
+
 			Course FilterC = new Course(c);
 			for (int i = 0; i < c.getNumSections(); i++) {
 				Section s = c.getSection(i);
-				
-				//Check days
+
+				// Check days
 				boolean days[] = { checkboxMon.isSelected(), checkboxTue.isSelected(), checkboxWed.isSelected(),
 						checkboxThu.isSelected(), checkboxFri.isSelected(), checkboxSat.isSelected() };
 				for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
@@ -358,9 +369,9 @@ public class Controller {
 				}
 				if (!Arrays.equals(all_false, days))
 					continue;
-				
-				//Check AM/PM
-				boolean valid = false; //used to check AM/PM filter, if criteria pass, it will turn true
+
+				// Check AM/PM
+				boolean valid = false; // used to check AM/PM filter, if criteria pass, it will turn true
 				if (checkboxAM.isSelected() && checkboxPM.isSelected()) {
 					boolean haveAM = false;
 					boolean havePM = false;
@@ -374,28 +385,25 @@ public class Controller {
 					}
 					if (haveAM == true && havePM == true)
 						valid = true;
-				}
-				else if (checkboxAM.isSelected()) {
+				} else if (checkboxAM.isSelected()) {
 					for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
 						if (s.getSlot(j).getStartHour() < 12)
 							valid = true;
 					}
-				}
-				else if (checkboxPM.isSelected()) {
+				} else if (checkboxPM.isSelected()) {
 					for (int j = 0; j < c.getSection(i).getNumSlots(); j++) {
 						if (s.getSlot(j).getEndHour() >= 12)
 							valid = true;
 					}
-				}
-				else
+				} else
 					valid = true;
-				
+
 				if (!valid)
 					continue;
-				
+
 				FilterC.addSection(s);
 			}
-			
+
 			this.course_filter.add(FilterC);
 			textAreaConsole.setText("Filtered:");
 		}
@@ -414,16 +422,18 @@ public class Controller {
 
 	/**
 	 * Clicked once: Display the Total Number of Categories: ALL_SUBJECT_COUNT
-	 * Clicked twice: scrape all the course according to the list of subjects, reset list of scraped course and list of filtered course
+	 * Clicked twice: scrape all the course according to the list of subjects, reset
+	 * list of scraped course and list of filtered course
+	 * 
 	 * @throws Exception
 	 */
 	@FXML
 	void allSubjectSearch() throws Exception {
-		//Task6  Find SFQ with my enrolled courses enabled
+		// Task6 Find SFQ with my enrolled courses enabled
 		buttonSfqEnrollCourse.setDisable(false);
-		
+
 		// WebClient client = new WebClient();
-		
+
 		String baseurl = textfieldURL.getText();
 		String term = textfieldTerm.getText();
 		String home = "ACCT";
@@ -432,47 +442,17 @@ public class Controller {
 		List<String> subjects = scraper.searchSubject(baseurl, term, home);
 
 		ALL_SUBJECT_COUNT = subjects.size();
-		
+
 		if (search_all_subject_clicked == false) {
 			search_all_subject_clicked = true;
 			textAreaConsole.setText("Total Number of Categories/Code Prefix: " + ALL_SUBJECT_COUNT);
 			return;
 		}
 
-		System.out.println(ALL_SUBJECT_COUNT);
-		
 		course_scraped.clear();
 		course_filter.clear();
 		section_filter.clear();
-		
-		/*
-		double subject_scraped = 0;
-		DoubleProperty progress = new SimpleDoubleProperty();
-		progress.set(0);
-		progressbar.progressProperty().bind(progress);
-		
-		for (String sub : (List<String>) subjects) {
-			List<Course> courses = scraper.scrape(baseurl, term, sub);
-			System.out.println(sub);
-			
-			for (int i = 0; i < courses.size(); i ++) {
-				course_scraped.add(courses.get(i));
-			}
 
-			textAreaConsole.setText(textAreaConsole.getText() + sub + " is done \n");
-
-			TOTAL_NUMBER_OF_COURSES += courses.size();
-			subject_scraped += 1;
-
-			progress.set(subject_scraped / ALL_SUBJECT_COUNT);
-			Thread.sleep(100);
-
-			//progressbar.setProgress(progress);
-			System.out.println(progressbar.getProgress());
-		}
-		*/
-		
-		
 		class bg_Thread implements Runnable {
 
 			double subject_scraped = 0;
@@ -483,8 +463,8 @@ public class Controller {
 				for (String sub : (List<String>) subjects) {
 					List<Course> courses = scraper.scrape(baseurl, term, sub);
 					// System.out.println(sub);
-					
-					for (int i = 0; i < courses.size(); i ++) {
+
+					for (int i = 0; i < courses.size(); i++) {
 						course_scraped.add(courses.get(i));
 					}
 
@@ -498,20 +478,28 @@ public class Controller {
 					progressbar.setProgress(progress);
 					// System.out.println(progressbar.getProgress());
 				}
-				
-				textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Courses fetched: " + TOTAL_NUMBER_OF_COURSES);
+
+				textAreaConsole.setText(textAreaConsole.getText() + "\n" + "Total Number of Courses fetched: "
+						+ TOTAL_NUMBER_OF_COURSES);
 				search_all_subject_clicked = false;
-				
-				System.out.println(section_filter.size());
-				System.out.println(course_scraped.size());
-				
+
 				table.setItems(getEnrolSection(false));
-				
-				System.out.println("All subject search end");
+
+				buttonselect.setText("Select All");
+				checkboxAM.setSelected(false);
+				checkboxPM.setSelected(false);
+				checkboxMon.setSelected(false);
+				checkboxTue.setSelected(false);
+				checkboxWed.setSelected(false);
+				checkboxThu.setSelected(false);
+				checkboxFri.setSelected(false);
+				checkboxSat.setSelected(false);
+				checkboxCom.setSelected(false);
+				checkboxExc.setSelected(false);
+				checkboxLab.setSelected(false);
+
 			}
 		}
-		
-		
 
 		Thread th = new Thread(new bg_Thread());
 		th.start();
@@ -562,9 +550,9 @@ public class Controller {
 
 	@FXML
 	void search() {
-		//Task 6  Find SFQ with my enrolled courses enabled
+		// Task 6 Find SFQ with my enrolled courses enabled
 		buttonSfqEnrollCourse.setDisable(false);
-		
+
 		List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), textfieldSubject.getText());
 		if (v == null)
 			textAreaConsole.setText(ErrorHandling.getErrorMessage());
@@ -626,7 +614,7 @@ public class Controller {
 			// Record the course we have scraped
 			this.course_scraped = v;
 			this.printTextAreaConsole(course_scraped, false);
-			
+
 			table.setItems(getEnrolSection(false));
 		}
 	}
@@ -635,7 +623,8 @@ public class Controller {
 	private List<Label> EnrolledLabelBack = new Vector<Label>();
 
 	/**
-	 *  Create a timetable based on enrolled section
+	 * Create a timetable based on enrolled section
+	 * 
 	 * @param sections List of sections that is enrolled by user
 	 */
 	public void timetable(List<Section> sections) {
@@ -652,11 +641,11 @@ public class Controller {
 			double r1 = Math.random();
 			double r2 = Math.random();
 			double r3 = Math.random();
-			if(r1 < 0.5)
+			if (r1 < 0.5)
 				r1 = 0.5 + r1;
-			if(r2 < 0.5)
+			if (r2 < 0.5)
 				r2 = 0.5 + r2;
-			if(r3 < 0.5)
+			if (r3 < 0.5)
 				r3 = 0.5 + r3;
 			for (int i = 0; i < se.getNumSlots(); i++) {
 				// System.out.println(se.getCourseName());
@@ -679,7 +668,7 @@ public class Controller {
 				randomLabelBack.setMaxWidth(Width);
 				randomLabelBack.setMinHeight(Height);
 				randomLabelBack.setMaxHeight(Height);
-				
+
 				randomLabel.setTextFill(Color.BLACK);
 				randomLabel.setOpacity(0.5);
 				randomLabel.setLayoutX(startX);
@@ -693,7 +682,7 @@ public class Controller {
 				EnrolledLabel.add(randomLabel);
 			}
 		}
-		
+
 		ap.getChildren().addAll(EnrolledLabelBack);
 		ap.getChildren().addAll(EnrolledLabel);
 	}
