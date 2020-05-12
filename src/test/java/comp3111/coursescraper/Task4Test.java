@@ -64,7 +64,7 @@ public class Task4Test extends ApplicationTest{
 		
 		//check table updated or not
 		clickOn("#tabTimetable");
-		assert(ap.getChildren().size() == num);
+		assert(ap.getChildren().size() != num);
 		
 	}
 
