@@ -12,7 +12,7 @@ Handling displaying data and error message in the console after search button is
 4.	Result is displayed, with total number of different sections, the total number of courses as well as the Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm with ascendingly according to the alphabetical order of the instructor’s name
 
 ### Alternative Flows
-#### S1. Incorrect base URL
+#### S1. Incorrect URL
 
 1.	{Search Information} If the system receives the URL, that have no data inside or have empty URL
 2.	Console will display “invalid URL” message
