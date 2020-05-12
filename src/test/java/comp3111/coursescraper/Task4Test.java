@@ -37,7 +37,7 @@ public class Task4Test extends ApplicationTest{
 	}
 
 	@Test
-	public void Testnoenroll() {
+	public void Testenroll() {
 		//get number of children at default, used to compare when updated
 		clickOn("#tabTimetable");
 		AnchorPane ap = (AnchorPane) s.lookup("#timepane");
@@ -59,11 +59,12 @@ public class Task4Test extends ApplicationTest{
 		//enroll a random course
 		clickOn("#tabList");
 		TableView<Section> table = (TableView<Section>) s.lookup("#table");
-		ObservableList<Section> enrolled_section = table.getItems();
+		Node enrol = from(table).lookup(".table-row-cell").nth(0).lookup(".table-cell").nth(4).lookup(".check-box:determinate").query();
+		clickOn(enrol);
 		
 		//check table updated or not
 		clickOn("#tabTimetable");
-		assert(ap.getChildren().size() == num);
+		assert(ap.getChildren().size() != num);
 		
 	}
 
