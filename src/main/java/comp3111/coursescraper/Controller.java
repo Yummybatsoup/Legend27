@@ -259,7 +259,10 @@ public class Controller {
 		}
 		return sections;
 	}
-
+	
+	/**
+	 *  trigger when select-all button click, check/uncheck all button
+	 */
 	@FXML
 	void buttonselectall() {
 		if (buttonselect.getText().equals("Select All")) {
@@ -321,7 +324,9 @@ public class Controller {
 		}
 	}
 
-	// Filter all the courses scraped
+	/**
+	 *  Filter the course based on criteria set in tab filter, trigger when criteria changed
+	 */
 	@FXML
 	void filter() {
 
@@ -630,8 +635,8 @@ public class Controller {
 	private List<Label> EnrolledLabelBack = new Vector<Label>();
 
 	/**
-	 * set timetable of input sections
-	 * @param sections list
+	 *  Create a timetable based on enrolled section
+	 * @param sections List of sections that is enrolled by user
 	 */
 	public void timetable(List<Section> sections) {
 		AnchorPane ap = (AnchorPane) tabTimetable.getContent();

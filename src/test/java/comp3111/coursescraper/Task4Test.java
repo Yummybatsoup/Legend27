@@ -2,22 +2,26 @@ package comp3111.coursescraper;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.control.Tab;
 
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
+public class Task4Test extends ApplicationTest{
 
-public class Task3Test extends ApplicationTest {
-	
 	private Scene s;
 	
 	@Override
@@ -32,9 +36,14 @@ public class Task3Test extends ApplicationTest {
    		s = scene;
 	}
 
-	
 	@Test
-	public void test() {
+	public void Testnoenroll() {
+		//get number of children at default, used to compare when updated
+		clickOn("#tabTimetable");
+		AnchorPane ap = (AnchorPane) s.lookup("#timepane");
+		int num = ap.getChildren().size();
+		
+		clickOn("#tabMain");
 		TextField url = (TextField) s.lookup("#textfieldURL");
 		url.setText("http://w5.ab.ust.hk/wcq/cgi-bin/");
 		TextField term = (TextField) s.lookup("#textfieldTerm");
@@ -43,23 +52,19 @@ public class Task3Test extends ApplicationTest {
 		subject.setText("COMP");
 		clickOn("#buttonSearch");
 		
+		//select random filter
 		clickOn("#tabFilter");
+		clickOn("#checkboxSat");
 		
-		clickOn("#checkboxMon");
+		//enroll a random course
 		clickOn("#tabList");
-		
 		TableView<Section> table = (TableView<Section>) s.lookup("#table");
-		ObservableList<Section> filter_section = table.getItems();
+		ObservableList<Section> enrolled_section = table.getItems();
 		
-		assert(filter_section.size() != 0);
+		//check table updated or not
+		clickOn("#tabTimetable");
+		assert(ap.getChildren().size() == num);
 		
-		Section s = filter_section.get(0);
-		s.setEnrolled(true);
-		
-		clickOn("#tabFilter");
-		clickOn("#checkboxMon");
-		clickOn("#tabList");
 	}
-
 
 }
