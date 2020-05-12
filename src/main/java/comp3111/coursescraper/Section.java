@@ -5,7 +5,15 @@ import javafx.beans.property.SimpleBooleanProperty;
 import java.util.List;
 import java.util.Vector;
 
-
+/**
+* <h1>Section class</h1>
+* This class is to declare a section class with param, 
+* 	private String title;
+*	private String instructor;
+*	private Slot [] slots;
+*	private int numSlots;
+*	private BooleanProperty enrolled = new SimpleBooleanProperty();
+*/
 public class Section {
 	private static final int DEFAULT_MAX_SLOT = 3;
 	
@@ -37,6 +45,10 @@ public class Section {
 		return s;
 	}
 	
+	/**
+	* default constructor  
+	* set 3 empty slot to section, numSlots =0 and course is not enroll
+	*/
 	public Section() {
 		slots = new Slot[DEFAULT_MAX_SLOT];
 		for (int i = 0; i < DEFAULT_MAX_SLOT; i++) 
@@ -67,51 +79,90 @@ public class Section {
 		*/
 	}
 	
+	/**
+	* get title
+	* @return title
+	*/
 	public String getTitle() {
 		return title;
 	}
 	
+	/**
+	* set title
+	* @param title String 
+	*/
 	public void setTitle(String title) {
 		this.title = title;
 	}
 	
+	/**
+	* add slot
+	* @param s slot
+	*/
 	public void addSlot(Slot s) {
 		if (numSlots >= DEFAULT_MAX_SLOT)
 			return;
 		slots[numSlots++] = s.clone();
 	}
 	
+	/**
+	* get slot
+	* @param i index
+	* @return slots[i] 
+	*/
 	public Slot getSlot(int i) {
 		if (i >= 0 && i < numSlots)
 			return slots[i];
 		return null;
 	}
 	
+	/**
+	* get num of slots
+	* @return numSlots number of slots of a section 
+	*/
 	public int getNumSlots() {
 		return numSlots;
 	}
 	
+	/**
+	* set number of slots
+	* @param numSlots number of slots to be set
+	*/
 	public void setNumSlots(int numSlots) {
 		this.numSlots = numSlots;
 	}
 	
+	/**
+	* get String of printing of input index 
+	* @param i index
+	* @return slots[i].toString() String value of slot 
+	*/
 	public String getSlotToString(int i) {
 		if (i >= 0 && i < numSlots)
 			return slots[i].toString();
 		return null;
 	}
 	
-	// Get the course
+	/**
+	* set Course
+	* @param c course type
+	*/
 	public void setCourse(Course c) {
 		this.course = c;
 	}
 	
-	// Get the section's course code
+	/**
+	* get section's course code
+	* @return course.getCourseCode 
+	*/
 	public String getCourseCode() {
 		return this.course.getCourseCode();
 	}
 	
-	// Get the section's course Name
+	/**
+	* get section's course name
+	* @return course.getCourseName 
+	*/
 	public String getCourseName() {
 		return this.course.getTitle();
 	}
@@ -126,22 +177,42 @@ public class Section {
 		this.courseName = courseName;
 	}
 	*/
+	/**
+	* set instructor name
+	* @param i String
+	*/
 	public void setInstructor(String i) {
 		this.instructor = i;
 	}
 	
+	/**
+	* get instructor name
+	* @return instructor name
+	*/
 	public String getInstructor() {
 		return this.instructor;
 	}
 	
+	/**
+	* get boolean of course is enrolled 
+	* @return enrolled.get() boolean
+	*/
 	public boolean isEnrolled() {
 		return enrolled.get();
 	}
 	
+	/**
+	* get enrolled property 
+	* @return BooleanProperty 
+	*/
 	public BooleanProperty enrolledProperty() {
 		return enrolled;
 	}
 	
+	/**
+	* set enrolled property 
+	* @param enrol boolean
+	*/
 	public void setEnrolled(boolean enrol) {
 		this.enrolled.set(enrol);
 	}

@@ -247,6 +247,16 @@ public class Scraper {
 		return null;
 	}
 
+	/**
+	 * Return a list of Course class, by web scraping input website with input
+	 * (baseurl + "/" + term + "/subject/" + sub)
+	 *
+	 * @param baseurl an base URL direct to course info
+	 * @param term    term code e.g 1910
+	 * @param home     subject code e.g COMP
+	 * @return subs   vector of String type
+	 * @throws Exception default exception
+	 */
 	public List<String> searchSubject(String baseurl, String term, String home) throws Exception {
 
 		HtmlPage home_page = client.getPage(baseurl + "/" + term + "/subject/" + home);
@@ -316,6 +326,14 @@ public class Scraper {
 		return null;
 	}
 
+	/**
+	 * Check whether name string is in the list
+	 *
+	 * @param name      an instructor name
+	 * @param list  	a list of String storing instructor name
+	 * @return the instictorSFQ type instr or null
+	 * @throws Exception set error message
+	 */
 	public InstructorSFQ checkexist(String name, List<InstructorSFQ> list) throws Exception {
 		try {
 			for (InstructorSFQ instr : list) {

@@ -629,6 +629,10 @@ public class Controller {
 	private List<Label> EnrolledLabel = new Vector<Label>();
 	private List<Label> EnrolledLabelBack = new Vector<Label>();
 
+	/**
+	 * set timetable of input sections
+	 * @param sections list
+	 */
 	public void timetable(List<Section> sections) {
 		AnchorPane ap = (AnchorPane) tabTimetable.getContent();
 
@@ -689,6 +693,11 @@ public class Controller {
 		ap.getChildren().addAll(EnrolledLabel);
 	}
 
+	/**
+	 * string self define assist function
+	 * @param str String
+	 * @return boolean
+	 */
 	public boolean equals(String str) {
 		if (str == null)
 			return false;
