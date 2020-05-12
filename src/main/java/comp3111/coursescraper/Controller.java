@@ -452,6 +452,8 @@ public class Controller {
 		course_scraped.clear();
 		course_filter.clear();
 		section_filter.clear();
+		
+		TOTAL_NUMBER_OF_COURSES = 0;
 
 		class bg_Thread implements Runnable {
 
