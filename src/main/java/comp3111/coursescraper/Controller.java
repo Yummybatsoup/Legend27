@@ -156,7 +156,9 @@ public class Controller {
 	// filtering
 	private List<Section> section_filter = new Vector<Section>();
 
-	// keep track of all the sections that are enrolled in
+	/**
+	 *  keep track of all the sections that are enrolled in
+	 */
 	public List<Section> section_enrolled = new Vector<Section>();
 
 	int TOTAL_NUMBER_OF_COURSES = 0; // for task 5
