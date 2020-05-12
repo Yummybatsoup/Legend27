@@ -633,7 +633,7 @@ public class Controller {
 
 	private List<Label> EnrolledLabel = new Vector<Label>();
 	private List<Label> EnrolledLabelBack = new Vector<Label>();
-	
+
 	/**
 	 *  Create a timetable based on enrolled section
 	 * @param sections List of sections that is enrolled by user
@@ -698,6 +698,11 @@ public class Controller {
 		ap.getChildren().addAll(EnrolledLabel);
 	}
 
+	/**
+	 * string self define assist function
+	 * @param str String
+	 * @return boolean
+	 */
 	public boolean equals(String str) {
 		if (str == null)
 			return false;

@@ -5,10 +5,14 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -75,13 +79,13 @@ public class Task6Test extends ApplicationTest {
 		assertTrue(console.getText().isBlank()==false);
 	}
 	
-	/*
+/*	
 	@Test
 	public void testSfqEnrollCourse() throws Exception {
 		// search
 		clickOn("#tabMain");
 		TextField url = (TextField) s.lookup("#textfieldURL");
-		url.setText("http://w5.ab.ust.hk/wcq/cgi-bin/123");
+		url.setText("http://w5.ab.ust.hk/wcq/cgi-bin");
 		TextField term = (TextField) s.lookup("#textfieldTerm");
 		term.setText("1910");
 		TextField subject = (TextField) s.lookup("#textfieldSubject");
@@ -93,15 +97,22 @@ public class Task6Test extends ApplicationTest {
 		
 		clickOn("#tabFilter");
 		clickOn("#checkboxAM");
-		clickOn("#tabList");
-		s.wait();
+//		clickOn("#tabList");
+//		TableView<Section> table = (TableView<Section>) s.lookup("#table");
+//		ObservableList<Section> enrolled_section = table.getItems();
+//		ObservableList<TableColumn<Section, ?>> cols = table.getColumns();
+//		TableColumn col = cols.get(4);
+//		col.getCellObservableValue(0)
+	
+		clickOn("#tabSfq");
+		TextField SFQurl=(TextField) s.lookup("#textfieldSfqUrl");
+		SFQurl.setText("http://thliuab.student.ust.hk/comp3111");
+		clickOn("#buttonSfqEnrollCourse");
 		
-		//enrollcourse
-		
-//		assertTrue();
+		TextArea console=(TextArea) s.lookup("#textAreaConsole");
+		assertTrue(console.getText().isBlank());
 	}
 	
-	*/
-
-
+*/	
+	
 }

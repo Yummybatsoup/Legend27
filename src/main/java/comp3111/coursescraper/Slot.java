@@ -6,6 +6,17 @@ import java.time.LocalTime;
 import java.util.Locale;
 import java.time.format.DateTimeFormatter;
 
+/**
+* <h1>Slot class</h1>
+* This class is to declare a slot class with param, 
+* 	private int day;
+*	private LocalTime start;
+*	private LocalTime end;
+*	private String venue;
+*	private String instructor;
+*	public static final String DAYS[] = {"Mo", "Tu", "We", "Th", "Fr", "Sa"};
+*	public static final Map with String and Integer DAYS_MAP
+*/
 public class Slot {
 	private int day;
 	private LocalTime start;
@@ -29,18 +40,40 @@ public class Slot {
 		s.instructor = this.instructor;
 		return s;
 	}
+	
+
+	/**
+	 * @return String DAYS[day] + start.toString() + "-" + end.toString() + " Venue :" + venue;
+	 */
 	public String toString() {
 		return DAYS[day] + start.toString() + "-" + end.toString() + " Venue :" + venue;
 	}
+	
+
+	/**
+	 * @return start.getHour
+	 */
 	public int getStartHour() {
 		return start.getHour();
 	}
+	
+
+	/**
+	 * @return start.getMinute
+	 */
 	public int getStartMinute() {
 		return start.getMinute();
 	}
+
+	/**
+	 * @return end.getHour
+	 */
 	public int getEndHour() {
 		return end.getHour();
 	}
+	/**
+	 * @return end.getMinute
+	 */
 	public int getEndMinute() {
 		return end.getMinute();
 	}
